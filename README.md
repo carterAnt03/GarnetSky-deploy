@@ -19,7 +19,7 @@ To run this app locally, install:
 - [Node.js LTS](https://nodejs.org/en/)  
 - Git  
 - VS Code 
-- use commands "npm start, npm build, npm run" 
+- use the commands "npm start, npm build, npm run" 
 
 Check installation:
 ```bash
