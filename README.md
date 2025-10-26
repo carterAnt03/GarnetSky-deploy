@@ -1,7 +1,7 @@
 # GarnetSky ☁️
 
-This project is our starting point for the **CSCE Capstone** course.  
-It’s a simple React + Vite app used to practice GitHub workflows, collaboration, and source control milestones.
+This project is our starting point for the CSCE Capstone course.  
+It’s a simple React + Vite app used to practice GitHub workflows, collaboration, and source control milestones. Using Node + npm cmds. 
 
 Our team is using this repo to demonstrate:
 - proper Git commits with verified emails,
