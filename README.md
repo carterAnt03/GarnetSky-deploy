@@ -1,8 +1,5 @@
 # GarnetSky ☁️
 
-Authors:
-Aidan McClelland - ajm54@email.sc.edu
-
 This project is our starting point for the CSCE Capstone course.  
 It’s a simple React + Vite app used to practice GitHub workflows, collaboration, and source control milestones. Using Node + npm cmds. 
 
@@ -29,3 +26,7 @@ Check installation:
 node -v
 npm -v
 git --version
+
+## Authors
+
+- Aidan McClelland - ajm54@email.sc.edu
