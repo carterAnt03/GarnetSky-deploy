@@ -1,6 +1,4 @@
-import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import NavBar from "./components/NavBar";
 import Home from "./pages/Home";
 import Search from "./pages/Search";
@@ -9,6 +7,7 @@ import Signup from "./pages/Signup";
 import Submit from "./pages/Submit";
 import Favorites from "./pages/Favorites";
 import RecipeDetails from "./pages/RecipeDetails";
+import "./App.css";
 
 function App() {
   return (
