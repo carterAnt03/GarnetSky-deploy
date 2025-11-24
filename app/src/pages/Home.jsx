@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { RECIPES } from "../data/recipes";
 
 export default function Home() {
@@ -6,7 +7,11 @@ export default function Home() {
   return (
     <main>
       <section className="section">
-        <h1 className="page-title">Featured Recipes</h1>
+        <h1 className="page-title">Welcome to GarnetSky Recipes</h1>
+        <p className="muted">
+          A simple recipe app where you can sign up, log in, and browse a small
+          collection of example dishes.
+        </p>
 
         <div className="featured card">
           <img src={featured.thumb} alt={featured.title} />
@@ -15,9 +20,11 @@ export default function Home() {
             <div className="muted">
               Time: {featured.time} &nbsp;•&nbsp; {featured.tags.join(" | ")}
             </div>
+            <p>{featured.desc}</p>
             <div className="actions">
-              <button className="icon">☆</button>
-              <button className="icon">↗</button>
+              <Link className="pill-btn" to="/search">
+                Browse all recipes
+              </Link>
             </div>
           </div>
         </div>
