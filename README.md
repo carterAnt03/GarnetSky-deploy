@@ -30,5 +30,5 @@ git --version
 ## Authors
 
 - Aidan McClelland - ajm54@email.sc.edu
-- Carter Antley - ctantley@email.sc.edu 
-
+- Jonah Mosquera - mosquerj@email.sc.edu
+- Carter Antley - ctantley@email.sc.edu
