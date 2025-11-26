@@ -1,73 +1,76 @@
 // src/services/authService.js
-import bcrypt from "bcryptjs";
+// Frontend wrapper around the Express auth API
 
-const USERS_KEY = "gs_users";
-const CURRENT_USER_KEY = "gs_current_user";
+const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3000/api/v1";
 
-function getUsers() {
-  const raw = localStorage.getItem(USERS_KEY);
-  return raw ? JSON.parse(raw) : [];
+async function handleJsonResponse(res) {
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!res.ok) {
+    const message = data?.error?.message || `Request failed with ${res.status}`;
+    throw new Error(message);
+  }
+
+  return data;
 }
 
-function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+// Fetch the current user using the cookie-based session
+export async function getCurrentUser() {
+  try {
+    const res = await fetch(`${API_BASE}/users/me`, {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (res.status === 401) return null;
+
+    const data = await handleJsonResponse(res);
+    const u = data.user;
+    if (!u) return null;
+
+    return { id: u.id, username: u.username ?? u.display_name ?? u.email };
+  } catch (err) {
+    console.error("getCurrentUser failed", err);
+    return null;
+  }
 }
 
-export function getCurrentUser() {
-  const raw = localStorage.getItem(CURRENT_USER_KEY);
-  return raw ? JSON.parse(raw) : null;
+export async function logOut() {
+  try {
+    await fetch(`${API_BASE}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch (err) {
+    console.error("logOut failed", err);
+  }
 }
 
-export function logOut() {
-  localStorage.removeItem(CURRENT_USER_KEY);
-}
-
-// 1.1 + 1.3: Sign up, store hashed password, enforce unique email/username
+// 1.1 + 1.3: Sign up via backend API, passwords hashed on the server
 export async function signUp({ email, username, password }) {
-  const users = getUsers();
+  const res = await fetch(`${API_BASE}/auth/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email, username, password }),
+  });
 
-  if (users.some((u) => u.email === email)) {
-    throw new Error("Email is already in use.");
-  }
-  if (users.some((u) => u.username === username)) {
-    throw new Error("Username is already in use.");
-  }
-
-  const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
-
-  const newUser = {
-    id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
-    email,
-    username,
-    passwordHash: hash,
-  };
-
-  users.push(newUser);
-  saveUsers(users);
-
-  const safeUser = { id: newUser.id, username: newUser.username };
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(safeUser));
-  return safeUser;
+  const data = await handleJsonResponse(res);
+  const u = data.user;
+  return { id: u.id, username: u.username ?? username };
 }
 
-// 1.2: Log in using email OR username + password
+// 1.2: Log in using email OR username + password via backend API
 export async function logIn({ identifier, password }) {
-  const users = getUsers();
+  const res = await fetch(`${API_BASE}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ identifier, password }),
+  });
 
-  const user = users.find(
-    (u) => u.email === identifier || u.username === identifier
-  );
-  if (!user) {
-    throw new Error("No account found with that email/username.");
-  }
-
-  const ok = await bcrypt.compare(password, user.passwordHash);
-  if (!ok) {
-    throw new Error("Incorrect password.");
-  }
-
-  const safeUser = { id: user.id, username: user.username };
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(safeUser));
-  return safeUser;
+  const data = await handleJsonResponse(res);
+  const u = data.user;
+  return { id: u.id, username: u.username ?? u.display_name ?? u.email };
 }

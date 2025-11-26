@@ -14,8 +14,22 @@ export function AuthProvider({ children }) {
   const [initializing, setInitializing] = useState(true);
 
   useEffect(() => {
-    setUser(getCurrentUser());
-    setInitializing(false);
+    let cancelled = false;
+
+    async function loadUser() {
+      try {
+        const u = await getCurrentUser();
+        if (!cancelled) setUser(u);
+      } finally {
+        if (!cancelled) setInitializing(false);
+      }
+    }
+
+    loadUser();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const value = {
