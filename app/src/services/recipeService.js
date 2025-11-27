@@ -1,26 +1,37 @@
 // src/services/recipeService.js
-import { RECIPES } from "../data/recipes";
+// Frontend wrapper around the recipes API
+
+const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:3000/api/v1";
+
+async function handleJsonResponse(res) {
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
+
+  if (!res.ok) {
+    const message = data?.error?.message || `Request failed with ${res.status}`;
+    throw new Error(message);
+  }
+
+  return data;
+}
 
 export async function searchRecipes({ query = "", tag = "" } = {}) {
-  const s = query.trim().toLowerCase();
+  const params = new URLSearchParams();
+  if (query) params.set("q", query);
+  if (tag) params.set("tag", tag);
 
-  let list = RECIPES;
+  const url = `${API_BASE}/recipes${params.toString() ? `?${params.toString()}` : ""}`;
 
-  if (s) {
-    list = list.filter((r) =>
-      [r.title, r.desc, ...(r.tags || [])]
-        .join(" ")
-        .toLowerCase()
-        .includes(s)
-    );
-  }
+  const res = await fetch(url, { method: "GET" });
+  const data = await handleJsonResponse(res);
+  return data.recipes ?? [];
+}
 
-  if (tag) {
-    list = list.filter((r) => (r.tags || []).includes(tag));
-  }
+export async function getRecipe(id) {
+  const res = await fetch(`${API_BASE}/recipes/${encodeURIComponent(id)}`, {
+    method: "GET",
+  });
 
-  // Simulate a little network latency
-  await new Promise((resolve) => setTimeout(resolve, 150));
-
-  return list;
+  const data = await handleJsonResponse(res);
+  return data.recipe ?? null;
 }

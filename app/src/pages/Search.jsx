@@ -8,7 +8,7 @@ const TAGS = Array.from(new Set(RECIPES.flatMap((r) => r.tags || [])));
 export default function Search() {
   const [q, setQ] = useState("");
   const [tag, setTag] = useState("");
-  const [results, setResults] = useState(RECIPES);
+  const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
 

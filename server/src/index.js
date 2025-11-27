@@ -10,10 +10,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 require('dotenv').config();
 
-const { signup, login, logout, getCurrentUser } = require('./controllers/authController');
-const { validate } = require('./utils/validation');
-const { signupSchema, loginSchema } = require('./utils/validation');
-const { requireAuth } = require('./middleware/auth');
+const authRoutes = require('./routes/authRoutes');
+const recipeRoutes = require('./routes/recipeRoutes');
 
 const app = express();
 
@@ -30,6 +28,9 @@ app.use(
     credentials: true,
   })
 );
+app.get('/', (req, res) => {
+  res.json({ message: 'GarnetSky API - see /api/v1/health' });
+});
 
 // Health check
 app.get('/api/v1/health', (req, res) => {
@@ -37,12 +38,10 @@ app.get('/api/v1/health', (req, res) => {
 });
 
 // Auth routes
-app.post('/api/v1/auth/signup', validate(signupSchema), signup);
-app.post('/api/v1/auth/login', validate(loginSchema), login);
-app.post('/api/v1/auth/logout', logout);
+app.use('/api/v1/auth', authRoutes);
 
-// Current user route
-app.get('/api/v1/users/me', requireAuth, getCurrentUser);
+// Recipe routes
+app.use('/api/v1/recipes', recipeRoutes);
 
 // Generic error handler
 // eslint-disable-next-line no-unused-vars

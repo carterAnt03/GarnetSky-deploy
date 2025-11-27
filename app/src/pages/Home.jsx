@@ -1,8 +1,31 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { RECIPES } from "../data/recipes";
+import { searchRecipes } from "../services/recipeService";
 
 export default function Home() {
-  const featured = RECIPES[0];
+  const [featured, setFeatured] = useState(RECIPES[0]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadFeatured() {
+      try {
+        const list = await searchRecipes({});
+        if (!cancelled && list.length > 0) {
+          setFeatured(list[0]);
+        }
+      } catch (err) {
+        console.error("Failed to load featured recipe", err);
+      }
+    }
+
+    loadFeatured();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <main>

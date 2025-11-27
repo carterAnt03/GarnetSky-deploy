@@ -18,7 +18,7 @@ async function handleJsonResponse(res) {
 // Fetch the current user using the cookie-based session
 export async function getCurrentUser() {
   try {
-    const res = await fetch(`${API_BASE}/users/me`, {
+    const res = await fetch(`${API_BASE}/auth/me`, {
       method: "GET",
       credentials: "include",
     });
