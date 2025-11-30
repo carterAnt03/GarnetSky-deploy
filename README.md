@@ -32,3 +32,4 @@ git --version
 - Aidan McClelland - ajm54@email.sc.edu
 - Jonah Mosquera - mosquerj@email.sc.edu
 - Carter Antley - ctantley@email.sc.edu
+- Jason Pope - jjpope@email.sc.edu
