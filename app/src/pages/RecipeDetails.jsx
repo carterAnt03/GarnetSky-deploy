@@ -1,42 +1,36 @@
+// app/src/pages/RecipeDetails.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { RECIPES } from "../data/recipes";
 import { getRecipe } from "../services/recipeService";
 
 export default function RecipeDetails() {
   const { id } = useParams();
   const [recipe, setRecipe] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
+    (async () => {
       try {
-        const r = await getRecipe(id);
-        if (!cancelled) {
-          setRecipe(r ?? RECIPES.find((x) => x.id === id) ?? RECIPES[0]);
-        }
+        const data = await getRecipe(id);
+        setRecipe(data);
       } catch (err) {
-        console.error("Failed to load recipe", err);
-        if (!cancelled) {
-          setRecipe(RECIPES.find((x) => x.id === id) ?? RECIPES[0]);
-          setError("Unable to load recipe from server; showing demo data.");
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
+        console.error(err);
+        setError(err.message || "Error loading recipe.");
       }
-    }
-
-    load();
-
-    return () => {
-      cancelled = true;
-    };
+    })();
   }, [id]);
 
-  if (loading) {
+  if (error) {
+    return (
+      <main>
+        <section className="section">
+          <p className="error-text">{error}</p>
+        </section>
+      </main>
+    );
+  }
+
+  if (!recipe) {
     return (
       <main>
         <section className="section">
@@ -46,33 +40,68 @@ export default function RecipeDetails() {
     );
   }
 
-  const r = recipe;
-
   return (
     <main>
-      <section className="section">
-        <h1 className="page-title">{r.title}</h1>
+      <section className="section details">
+        {/* Hero / summary */}
+        <div className="details-header">
+          {recipe.thumb && (
+            <img
+              src={recipe.thumb}
+              alt={recipe.title}
+            />
+          )}
 
-        <div className="details card">
-          <div className="details-header">
-            <div>
-              <div className="muted">
-                ⏱ {r.time} • {r.tags.join(" • ")}
-              </div>
-              <p>{r.desc}</p>
-            </div>
-            <img src={r.thumb} alt={r.title} />
-          </div>
+          <div>
+            <h1 className="page-title">{recipe.title}</h1>
 
-          <div className="instructions">
-            <h3>INSTRUCTIONS</h3>
-            <ol>
-              {r.instructions.map((s, i) => (
-                <li key={i}>{s}</li>
-              ))}
-            </ol>
+            {/* time + tags / meta */}
+            <p className="muted">
+              {recipe.time && <>Time: {recipe.time}</>}
+              {recipe.tags && recipe.tags.length > 0 && (
+                <>
+                  {" "}
+                  • Tags: {recipe.tags.join(", ")}
+                </>
+              )}
+            </p>
+
+            {/* 3.1 – rich description */}
+            {recipe.desc && (
+              <p style={{ marginTop: "1rem", lineHeight: 1.5 }}>
+                {recipe.desc}
+              </p>
+            )}
           </div>
         </div>
+
+        {/* 3.3 – Ingredients list */}
+        <section className="card cream">
+          <h2>Ingredients</h2>
+          {recipe.ingredients && recipe.ingredients.length > 0 ? (
+            <ul className="bullets">
+              {recipe.ingredients.map((ing, idx) => (
+                <li key={idx}>{ing}</li>
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">No ingredients listed for this recipe yet.</p>
+          )}
+        </section>
+
+        {/* 3.2 – Step-by-step tutorial */}
+        <section className="card rose">
+          <h2>Step-by-step instructions</h2>
+          {recipe.instructions && recipe.instructions.length > 0 ? (
+            <ol className="bullets">
+              {recipe.instructions.map((step, idx) => (
+                <li key={idx}>{step}</li>
+              ))}
+            </ol>
+          ) : (
+            <p className="muted">No instructions available yet.</p>
+          )}
+        </section>
       </section>
     </main>
   );

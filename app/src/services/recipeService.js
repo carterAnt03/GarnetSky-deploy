@@ -35,3 +35,16 @@ export async function getRecipe(id) {
   const data = await handleJsonResponse(res);
   return data.recipe ?? null;
 }
+
+export async function createRecipe(payload) {
+  const res = await fetch(`${API_BASE}/recipes`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await handleJsonResponse(res);
+  return data.recipe; // { id, title, desc, time, tags, thumb }
+}
