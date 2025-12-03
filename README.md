@@ -33,3 +33,4 @@ git --version
 - Jonah Mosquera - mosquerj@email.sc.edu
 - Carter Antley - ctantley@email.sc.edu
 - Jason Pope - jjpope@email.sc.edu 
+- Ayden Mathews - aydenwm@email.sc.edu 
