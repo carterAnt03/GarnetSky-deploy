@@ -8,6 +8,7 @@ export default function RecipeCard({ r }) {
         <h3>{r.title}</h3>
         <p className="muted">{r.desc}</p>
       </div>
+    
     </Link>
   );
 }
