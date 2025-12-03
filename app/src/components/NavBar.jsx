@@ -1,31 +1,41 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function NavBar() {
-  const { pathname } = useLocation();
+  const location = useLocation();
   const { user, logOut } = useAuth();
 
-  const Tab = ({ to, children }) => (
-    <Link
-      className={`pill ${pathname === to ? "active" : ""}`}
-      to={to}
-    >
-      {children}
-    </Link>
-  );
+  function Tab({ to, children }) {
+    const isActive = location.pathname === to;
+
+    return (
+      <Link
+        to={to}
+        className={`pill ${isActive ? "active" : ""}`}
+      >
+        {children}
+      </Link>
+    );
+  }
 
   return (
     <header className="nav-bar">
       <div className="nav-inner">
-        {/* Brand / Site Title */}
-        <span className="brand">GarnetSky Recipes</span>
 
-        {/* Navigation Tabs */}
+        {/* Brand */}
+        <Link to="/" className="brand">
+          GarnetSky Recipes
+        </Link>
+
+        {/* Nav Tabs */}
         <nav className="tabs">
           <Tab to="/">Home</Tab>
           <Tab to="/search">Search</Tab>
           <Tab to="/submit">Submit</Tab>
           <Tab to="/favorites">Favorites</Tab>
+          <Tab to="/about">About</Tab>
+          <Tab to="/contact">Contact</Tab>
 
           {user ? (
             <>
