@@ -5,15 +5,18 @@ const {
   createRecipe,
 } = require('../controllers/recipesController');
 
+const { requireAuth } = require('../middleware/auth');
+const { createRecipeSchema, validate } = require('../utils/validation');
+
 const router = express.Router();
 
-// List/search
+// List/search recipes
 router.get('/', listRecipes);
 
-// Create
-router.post('/', createRecipe);
+// Create recipe
+router.post('/', requireAuth, validate(createRecipeSchema), createRecipe);
 
-// Details
+// Get recipe by slug
 router.get('/:slug', getRecipeBySlug);
 
 module.exports = router;
