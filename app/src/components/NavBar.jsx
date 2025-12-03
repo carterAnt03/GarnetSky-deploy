@@ -30,12 +30,12 @@ export default function NavBar() {
 
         {/* Nav Tabs */}
         <nav className="tabs">
-          <Tab to="/">Home</Tab>
-          <Tab to="/search">Search</Tab>
-          <Tab to="/submit">Submit</Tab>
-          <Tab to="/favorites">Favorites</Tab>
-          <Tab to="/about">About</Tab>
-          <Tab to="/contact">Contact</Tab>
+          <Tab to="/">Home </Tab>
+          <Tab to="/search">Search </Tab>
+          <Tab to="/submit">Submit </Tab>
+          <Tab to="/favorites">Favorites </Tab>
+          <Tab to="/about">About </Tab>
+          <Tab to="/contact">Contact </Tab>
 
           {user ? (
             <>
