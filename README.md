@@ -26,6 +26,41 @@ Check installation:
 node -v
 npm -v
 git --version
+```
+
+---
+
+## Testing
+
+All tests are located in the `tests/` directory:
+- **UI Tests**: `tests/ui/**/*.test.jsx`
+- **Backend Tests**: `tests/backend/**/*.test.js`
+
+### Running Tests
+
+1. Navigate to the tests directory:
+```bash
+cd tests
+```
+
+2. Install test dependencies:
+```bash
+npm install
+```
+
+3. Run all tests:
+```bash
+npm test
+```
+
+4. Run specific test suites:
+```bash
+npm run test:ui        # Run UI component tests only
+npm run test:backend   # Run backend validation tests only
+npm run test:ui:watch  # Run UI tests in watch mode
+```
+
+---
 
 ## Authors
 
