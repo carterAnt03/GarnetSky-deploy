@@ -76,7 +76,7 @@ function validate(schema) {
           error: {
             code: 'VALIDATION_ERROR',
             message: 'Invalid request data',
-            details: error.errors.map((err) => ({
+            details: (error.issues || error.errors || []).map((err) => ({
               field: err.path.join('.'),
               message: err.message,
             })),
@@ -103,7 +103,7 @@ function validateQuery(schema) {
           error: {
             code: 'VALIDATION_ERROR',
             message: 'Invalid query parameters',
-            details: error.errors.map((err) => ({
+            details: (error.issues || error.errors || []).map((err) => ({
               field: err.path.join('.'),
               message: err.message,
             })),
