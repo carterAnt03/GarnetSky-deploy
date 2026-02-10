@@ -37,8 +37,6 @@ All tests are located in the `tests/` directory:
 - **Backend Tests**: `tests/backend/**/*.test.js`
 
 ### Running Tests
-> Note: Backend tests import code from `server/`, so make sure you have also installed server dependencies (`cd server && npm install`) before running backend tests.
-
 
 1. Navigate to the tests directory:
 ```bash
