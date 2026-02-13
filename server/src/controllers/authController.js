@@ -1,12 +1,35 @@
 /**
  * Authentication Controller
- * 
+ *
  * Handles user signup, login, logout, and profile retrieval
  */
 
-const bcrypt = require('bcrypt');
-const pool = require('../config/database');
-const { generateToken } = require('../utils/jwt');
+function getAuthCookieOptions() {
+  const isProd = process.env.NODE_ENV === 'production';
+
+  return {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    path: '/',
+  };
+}
+
+const bcrypt = require("bcrypt");
+const pool = require("../config/database");
+const { generateToken } = require("../utils/jwt");
+
+function cookieOptions() {
+  const isProd = process.env.NODE_ENV === "production";
+
+  return {
+    httpOnly: true,
+    secure: isProd, // Render = production => true (required for SameSite=None)
+    sameSite: isProd ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  };
+}
 
 /**
  * Sign up a new user
@@ -18,18 +41,18 @@ async function signup(req, res) {
 
     // Check if email or username already exists
     const existingUser = await pool.query(
-      'SELECT id, email, username FROM users WHERE email = $1 OR username = $2',
+      "SELECT id, email, username FROM users WHERE email = $1 OR username = $2",
       [email, username]
     );
 
     if (existingUser.rows.length > 0) {
       const conflict = existingUser.rows[0];
-      // Prefer a slightly more specific error code/message when possible
+
       if (conflict.email === email) {
         return res.status(409).json({
           error: {
-            code: 'EMAIL_EXISTS',
-            message: 'Email is already in use',
+            code: "EMAIL_EXISTS",
+            message: "Email is already in use",
           },
         });
       }
@@ -37,17 +60,16 @@ async function signup(req, res) {
       if (conflict.username === username) {
         return res.status(409).json({
           error: {
-            code: 'USERNAME_EXISTS',
-            message: 'Username is already in use',
+            code: "USERNAME_EXISTS",
+            message: "Username is already in use",
           },
         });
       }
 
-      // Fallback if we somehow got here
       return res.status(409).json({
         error: {
-          code: 'USER_CONFLICT',
-          message: 'A user with these credentials already exists',
+          code: "USER_CONFLICT",
+          message: "A user with these credentials already exists",
         },
       });
     }
@@ -68,29 +90,25 @@ async function signup(req, res) {
     // Generate JWT token
     const token = generateToken(user);
 
-    // Set token as HTTP-only cookie
-    res.cookie('authToken', token, {
-      httpOnly: true, // Cannot be accessed by JavaScript
-      secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-      sameSite: 'lax', // CSRF protection
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    // Set token cookie (cross-site safe in production)
+    res.cookie('authToken', token, getAuthCookieOptions());
 
     // Return user data (without password hash)
     res.status(201).json({
       user: {
         id: user.id,
         email: user.email,
+        username: user.username,
         display_name: user.display_name,
         created_at: user.created_at,
       },
     });
   } catch (error) {
-    console.error('Signup error:', error);
+    console.error("Signup error:", error);
     res.status(500).json({
       error: {
-        code: 'SERVER_ERROR',
-        message: 'An error occurred during signup',
+        code: "SERVER_ERROR",
+        message: "An error occurred during signup",
       },
     });
   }
@@ -106,15 +124,15 @@ async function login(req, res) {
 
     // Find user by email OR username
     const result = await pool.query(
-      'SELECT * FROM users WHERE email = $1 OR username = $1',
+      "SELECT * FROM users WHERE email = $1 OR username = $1",
       [identifier]
     );
 
     if (result.rows.length === 0) {
       return res.status(401).json({
         error: {
-          code: 'INVALID_CREDENTIALS',
-          message: 'Invalid email or password',
+          code: "INVALID_CREDENTIALS",
+          message: "Invalid email or password",
         },
       });
     }
@@ -127,8 +145,8 @@ async function login(req, res) {
     if (!isPasswordValid) {
       return res.status(401).json({
         error: {
-          code: 'INVALID_CREDENTIALS',
-          message: 'Invalid email or password',
+          code: "INVALID_CREDENTIALS",
+          message: "Invalid email or password",
         },
       });
     }
@@ -136,13 +154,8 @@ async function login(req, res) {
     // Generate JWT token
     const token = generateToken(user);
 
-    // Set token as HTTP-only cookie
-    res.cookie('authToken', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    // Set token cookie (cross-site safe in production)
+    res.cookie('authToken', token, getAuthCookieOptions());
 
     // Return user data
     res.status(200).json({
@@ -155,11 +168,11 @@ async function login(req, res) {
       },
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
     res.status(500).json({
       error: {
-        code: 'SERVER_ERROR',
-        message: 'An error occurred during login',
+        code: "SERVER_ERROR",
+        message: "An error occurred during login",
       },
     });
   }
@@ -170,29 +183,28 @@ async function login(req, res) {
  * POST /api/v1/auth/logout
  */
 function logout(req, res) {
-  // Clear the auth cookie
-  res.clearCookie('authToken');
+  res.clearCookie("authToken");
   res.status(204).send();
 }
 
 /**
  * Get current user profile
- * GET /api/v1/users/me
+ * GET /api/v1/auth/me
  * Requires authentication
  */
 async function getCurrentUser(req, res) {
   try {
     // req.user is set by the requireAuth middleware
     const result = await pool.query(
-      'SELECT id, email, username, display_name, created_at FROM users WHERE id = $1',
+      "SELECT id, email, username, display_name, created_at FROM users WHERE id = $1",
       [req.user.id]
     );
 
     if (result.rows.length === 0) {
       return res.status(404).json({
         error: {
-          code: 'USER_NOT_FOUND',
-          message: 'User not found',
+          code: "USER_NOT_FOUND",
+          message: "User not found",
         },
       });
     }
@@ -201,11 +213,11 @@ async function getCurrentUser(req, res) {
       user: result.rows[0],
     });
   } catch (error) {
-    console.error('Get current user error:', error);
+    console.error("Get current user error:", error);
     res.status(500).json({
       error: {
-        code: 'SERVER_ERROR',
-        message: 'An error occurred while fetching user data',
+        code: "SERVER_ERROR",
+        message: "An error occurred while fetching user data",
       },
     });
   }
