@@ -37,10 +37,19 @@ describe("Validation schemas (unit)", () => {
     const ok = createRecipeSchema.parse({
       title: "PB&J",
       description: "Classic",
-      ingredients: ["bread", "peanut butter", "jelly"],
-      instructions: ["spread", "assemble"],
+      ingredients: [
+        { name: "bread" },
+        { name: "peanut butter" },
+        { name: "jelly" },
+      ],
+      steps: [
+        { step_order: 1, text: "Spread peanut butter." },
+        { step_order: 2, text: "Add jelly." },
+        { step_order: 3, text: "Assemble sandwich." },
+      ],
       tags: [],
     });
+
     expect(ok.tags).toEqual([]);
   });
 });
