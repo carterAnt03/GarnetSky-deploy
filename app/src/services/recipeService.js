@@ -2,6 +2,7 @@
 // Frontend-only "API" for recipes + favorites using localStorage.
 
 import { RECIPES } from "../data/recipes";
+import { api } from "../api";
 
 // Keys for localStorage
 const EXTRA_RECIPES_KEY = "gs_extra_recipes";
@@ -88,7 +89,29 @@ export async function getRecipe(id) {
   if (!found) throw new Error("Recipe not found.");
   return found;
 }
+// Create a new recipe via the backend API
+// Sends the form data as a POST request and returns the saved recipe
+export async function createRecipe(payload) {
+  
+  //Call the API with the form fields from Submit.jsx
+  const data = await api("/api/v1/recipes", {
+    method: "POST",
+    body: JSON.stringify({
+      authorId: payload.authorId,     // ID of the logged-in user
+      title: payload.title,
+      desc: payload.desc,
+      time: payload.time,
+      tags: payload.tags,            // Comma-separated string of tags
+      imageUrl: payload.imageUrl,
+      ingredientsText: payload.ingredientsText,     //NewLine-separated ingredients
+      instructionsText: payload.instructionsText,   //NewLine-separated instructions
+    }),
+  });
 
+  //The backend returns { recipe: { ... } }, so it pulls out just the recipe.
+  return data.recipe;
+}
+/* 
 // Create a new recipe (saved in localStorage)
 export async function createRecipe(payload) {
   await delay();
@@ -118,6 +141,7 @@ export async function createRecipe(payload) {
 
   return newRecipe;
 }
+*/
 
 // ----------------- Favorites API (per user via localStorage) -----------------
 

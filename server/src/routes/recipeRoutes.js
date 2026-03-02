@@ -14,7 +14,7 @@ const router = express.Router();
 router.get('/', listRecipes);
 
 // Create recipe
-router.post('/', requireAuth, validate(createRecipeSchema), createRecipe);
+router.post('/', requireAuth, createRecipe);
 
 // Get recipe by slug
 router.get('/:slug', getRecipeBySlug);
