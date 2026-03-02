@@ -33,6 +33,7 @@ export default function NavBar() {
           <Tab to="/">Home </Tab>
           <Tab to="/search">Search </Tab>
           <Tab to="/submit">Submit </Tab>
+          <Tab to="/recipe-of-the-day">Daily Recipe</Tab>
           <Tab to="/favorites">Favorites </Tab>
           <Tab to="/about">About </Tab>
           <Tab to="/contact">Contact </Tab>
