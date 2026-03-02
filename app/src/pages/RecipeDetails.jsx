@@ -9,6 +9,7 @@ import {
   removeFavorite,
 } from "../services/recipeService";
 import { useAuth } from "../context/AuthContext";
+import { getCuisineClass } from "../theme/cuisineThemes";
 
 export default function RecipeDetails() {
   const { id } = useParams();
@@ -106,10 +107,12 @@ export default function RecipeDetails() {
       </main>
     );
   }
+  // Detect cuisine from tags to apply the matching color theme to the page
+  const cuisineClass = getCuisineClass(recipe.tags);
 
-  return (
-    <main>
-      <section className="section details">
+    return (
+      <main>
+        <section className={`section details ${cuisineClass}`}>
         {/* Hero / summary */}
         <div className="details-header">
           {recipe.thumb && (
@@ -120,15 +123,20 @@ export default function RecipeDetails() {
             <h1 className="page-title">{recipe.title}</h1>
 
             {/* time + tags / meta */}
-            <p className="muted">
-              {recipe.time && <>Time: {recipe.time}</>}
+              <p className="muted">
+                {recipe.time && <>Time: {recipe.time}</>}
+              </p>
+
+              {/* Render each tag as a styled pill — cuisine tags get accent color */}
               {recipe.tags && recipe.tags.length > 0 && (
-                <>
-                  {" "}
-                  • Tags: {recipe.tags.join(", ")}
-                </>
+                <div style={{ marginTop: "0.5rem" }}>
+                  {recipe.tags.map((tag) => (
+                    <span key={tag} className="cuisine-tag">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               )}
-            </p>
 
             {/* Favorite button */}
             <div style={{ marginTop: "0.9rem", display: "flex", gap: "0.5rem" }}>

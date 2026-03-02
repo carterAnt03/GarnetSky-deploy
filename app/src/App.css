@@ -394,3 +394,50 @@ button.icon {
 }
 
 }
+/* Cuisine theme classes */
+/* Applied to recipe cards and detail pages based on detected cuisine tag.                                                                       
+Each theme sets an accent color used for borders, highlights, and tags. */
+  
+     /* Italian — red and green inspired by the Italian flag */
+  .theme-italian { --cuisine-accent: #ce2b37; --cuisine-secondary: #009246; }
+
+  /* Mexican — warm green and red with a golden accent */
+  .theme-mexican { --cuisine-accent: #006847; --cuisine-secondary: #ce1126; }
+
+  /* Japanese — deep red (torii gate) with a dark ink secondary */
+  .theme-japanese { --cuisine-accent: #bc002d; --cuisine-secondary: #1a1a2e; }
+
+  /* Indian — saffron orange with a deep green secondary */
+  .theme-indian { --cuisine-accent: #ff9933; --cuisine-secondary: #138808; }
+
+  /* French — classic navy blue with gold */
+  .theme-french { --cuisine-accent: #002395; --cuisine-secondary: #c8a951; }
+
+  /* Mediterranean — ocean blue with sandy secondary */
+  .theme-mediterranean { --cuisine-accent: #0077b6; --cuisine-secondary: #e9c46a; }
+
+  /* American — bold red with navy secondary */
+  .theme-american { --cuisine-accent: #b22234; --cuisine-secondary: #3c3b6e; }
+
+  /* Chinese — festive red with gold secondary */
+  .theme-chinese { --cuisine-accent: #de2910; --cuisine-secondary: #ffde00; }
+
+  /* Thai — deep purple with gold secondary */
+  .theme-thai { --cuisine-accent: #4b0082; --cuisine-secondary: #f4b942; }
+
+  /* Apply the accent color to the card's left border when a cuisine is detected */
+  .recipe-card[class*="theme-"] {
+    border-left: 4px solid var(--cuisine-accent);
+  }
+
+  /* Style cuisine tags on the detail page using the accent color */
+  .cuisine-tag {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--cuisine-accent, #f97316);
+    color: #fff;
+    margin-right: 0.25rem;
+  }
