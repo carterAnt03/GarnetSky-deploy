@@ -13,6 +13,7 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import RecipeDetails from "./pages/RecipeDetails";
+import RecipeOfTheDay from "./pages/RecipeOfTheDay";
 
 // Optional: keep your API test page accessible at /__test
 import TestApi from "./pages/TestApi";
@@ -38,6 +39,7 @@ export default function App() {
             <Route path="/search" element={<Search />} />
             <Route path="/submit" element={<Submit />} />
             <Route path="/favorites" element={<Favorites />} />
+            <Route path="/recipe-of-the-day" element={<RecipeOfTheDay />} />
             <Route path="/recipe/:id" element={<RecipeDetails />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
