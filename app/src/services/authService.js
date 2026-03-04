@@ -1,124 +1,41 @@
+// src/services/authService.js
+// Auth Service - connects to the backend API instead of localStorage
 
+import { api } from "../api";
 
-const USERS_KEY = "gs_users";
-const CURRENT_USER_KEY = "gs_currentUser";
-
-// Small delay to feel like a real network call
-function delay(ms = 150) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-// ---------------- helpers ----------------
-
-function loadUsers() {
+// Check if a user is currently logged in by calling the backend
+// The backend reads the JWT cookie and returns the user if valid
+export async function getCurrentUser() {
   try {
-    const raw = localStorage.getItem(USERS_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const data = await api("/api/v1/auth/me");
+    return { id: data.user.id, username: data.user.username}
   } catch {
-    return [];
-  }
-}
-
-function saveUsers(users) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-}
-
-function saveCurrentUser(user) {
-  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-}
-
-function loadCurrentUser() {
-  try {
-    const raw = localStorage.getItem(CURRENT_USER_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
+    //No active session - user is not logged in
     return null;
   }
 }
 
-// Simple ID generator for demo users
-function makeUserId() {
-  return "u_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+// Sign up a new user and return their info
+export async function signUp({email,username,password}) {
+  const data = await api("/api/v1/auth/signup", {
+  method: "POST",
+  body: JSON.stringify({ email, username, password }),
+  });
+
+  return { id: data.user.id, username: data.user.username}
 }
 
-// ---------------- public API ----------------
-
-// Fetch the current user (from localStorage)
-export async function getCurrentUser() {
-  await delay();
-  const u = loadCurrentUser();
-  if (!u) return null;
-
-  // ensure we always return the shape AuthContext expects
-  return { id: u.id, username: u.username ?? u.email };
-}
-
-// Log out: clear current user in localStorage
-export async function logOut() {
-  await delay();
-  localStorage.removeItem(CURRENT_USER_KEY);
-}
-
-// 1.1 + 1.3: Sign up, enforcing unique email + username
-export async function signUp({ email, username, password }) {
-  await delay();
-
-  const trimmedEmail = email.trim().toLowerCase();
-  const trimmedUsername = username.trim();
-
-  if (!trimmedEmail || !trimmedUsername || !password) {
-    throw new Error("Please fill in all fields.");
-  }
-
-  const users = loadUsers();
-
-  const emailTaken = users.some((u) => u.email.toLowerCase() === trimmedEmail);
-  if (emailTaken) {
-    throw new Error("That email is already registered.");
-  }
-
-  const usernameTaken = users.some(
-    (u) => u.username.toLowerCase() === trimmedUsername.toLowerCase()
-  );
-  if (usernameTaken) {
-    throw new Error("That username is already taken.");
-  }
-
-  // NOTE: For a real app we would hash+salt the password on the server.
-  // Here, for the class demo, we store it as-is in localStorage.
-  const newUser = {
-    id: makeUserId(),
-    email: trimmedEmail,
-    username: trimmedUsername,
-    password, // demo only, not secure
-  };
-
-  users.push(newUser);
-  saveUsers(users);
-  saveCurrentUser({ id: newUser.id, username: newUser.username, email: newUser.email });
-
-  return { id: newUser.id, username: newUser.username };
-}
-
-// 1.2: Log in using email OR username + password
+// Log in with email or username + password
 export async function logIn({ identifier, password }) {
-  await delay();
+  const data = await api("/api/v1/auth/login", {
+    method: "POST",
+    body: JSON.stringify({ identifier, password }),
+  });
 
-  const ident = identifier.trim().toLowerCase();
-  const users = loadUsers();
+  return { id: data.user.id, username: data.user.username}
+}
 
-  const found = users.find(
-    (u) =>
-      u.email.toLowerCase() === ident ||
-      u.username.toLowerCase() === ident
-  );
-
-  if (!found || found.password !== password) {
-    throw new Error("Invalid email/username or password.");
-  }
-
-  const current = { id: found.id, username: found.username, email: found.email };
-  saveCurrentUser(current);
-
-  return { id: found.id, username: found.username };
+// Log out - clears the JWT cookie on the backend
+export async function logOut() {
+  await api("/api/v1/auth/logout",{method: "POST"});
 }
