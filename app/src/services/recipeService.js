@@ -1,32 +1,14 @@
 // src/services/recipeService.js
-// Frontend-only "API" for recipes + favorites using localStorage.
+// Recipes are fetched from the backend API, with a fallback to local demo data.
+// Favorites are stored client-side (localStorage) for the beta milestone.
 
 import { RECIPES } from "../data/recipes";
 import { api } from "../api";
 
 // Keys for localStorage
-const EXTRA_RECIPES_KEY = "gs_extra_recipes";
 const CURRENT_USER_KEY = "gs_currentUser";
 
 // ----------------- helpers -----------------
-
-function loadExtraRecipes() {
-  try {
-    const raw = localStorage.getItem(EXTRA_RECIPES_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveExtraRecipes(list) {
-  localStorage.setItem(EXTRA_RECIPES_KEY, JSON.stringify(list));
-}
-
-function getAllRecipesInternal() {
-  const extras = loadExtraRecipes();
-  return [...RECIPES, ...extras];
-}
 
 function getCurrentUserSync() {
   try {
@@ -54,114 +36,104 @@ function saveFavoriteIdsForUser(userId, ids) {
   localStorage.setItem(favoriteKeyForUser(userId), JSON.stringify(ids));
 }
 
-// Pretend it's async like a real API
-function delay(ms = 150) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-// ----------------- Recipes API -----------------
-
-// Search recipes by query + tag
-export async function searchRecipes({ query = "", tag = "" } = {}) {
-  await delay();
+function filterLocalRecipes({ query = "", tag = "" } = {}) {
   const q = query.trim().toLowerCase();
   const t = tag.trim().toLowerCase();
 
-  return getAllRecipesInternal().filter((r) => {
+  return RECIPES.filter((r) => {
     const matchesQuery =
       !q ||
       r.title.toLowerCase().includes(q) ||
       (r.desc && r.desc.toLowerCase().includes(q)) ||
-      (r.tags && r.tags.some((tag) => tag.toLowerCase().includes(q)));
+      (r.tags && r.tags.some((tg) => tg.toLowerCase().includes(q)));
 
     const matchesTag =
-      !t || (r.tags && r.tags.some((tag) => tag.toLowerCase() === t));
+      !t || (r.tags && r.tags.some((tg) => tg.toLowerCase() === t));
 
     return matchesQuery && matchesTag;
   });
 }
 
-// Get a single recipe by ID
-export async function getRecipe(id) {
-  await delay();
-  const all = getAllRecipesInternal();
-  const found = all.find((r) => r.id === id);
-  if (!found) throw new Error("Recipe not found.");
-  return found;
+async function listRemoteRecipes({ query = "", tag = "" } = {}) {
+  const params = new URLSearchParams();
+  if (query && query.trim()) params.set("q", query.trim());
+  if (tag && tag.trim()) params.set("tag", tag.trim());
+
+  const qs = params.toString();
+  const data = await api(`/api/v1/recipes${qs ? `?${qs}` : ""}`);
+  return Array.isArray(data?.recipes) ? data.recipes : [];
 }
+
+// ----------------- Recipes API -----------------
+
+// Search recipes by query + tag
+// - Remote recipes are authoritative for submitted content
+// - Local RECIPES are used as a demo fallback
+export async function searchRecipes({ query = "", tag = "" } = {}) {
+  try {
+    const [remote, local] = await Promise.all([
+      listRemoteRecipes({ query, tag }),
+      Promise.resolve(filterLocalRecipes({ query, tag })),
+    ]);
+
+    // Merge, preferring remote when IDs collide
+    const merged = new Map();
+    for (const r of local) merged.set(r.id, r);
+    for (const r of remote) merged.set(r.id, r);
+    return Array.from(merged.values());
+  } catch (err) {
+    console.warn("searchRecipes: remote failed, falling back to local", err);
+    return filterLocalRecipes({ query, tag });
+  }
+}
+
+// Get a single recipe by ID (slug)
+// First try local demo data; if not found, fetch from backend.
+export async function getRecipe(id) {
+  const local = RECIPES.find((r) => r.id === id);
+  if (local) return local;
+
+  const data = await api(`/api/v1/recipes/${encodeURIComponent(id)}`);
+  if (!data?.recipe) throw new Error("Recipe not found.");
+  return data.recipe;
+}
+
 // Create a new recipe via the backend API
-// Sends the form data as a POST request and returns the saved recipe
+// Sends the form data as a POST request and returns the saved recipe.
 export async function createRecipe(payload) {
-  
-  //Call the API with the form fields from Submit.jsx
   const data = await api("/api/v1/recipes", {
     method: "POST",
     body: JSON.stringify({
-      authorId: payload.authorId,     // ID of the logged-in user
+      authorId: payload.authorId,
       title: payload.title,
       desc: payload.desc,
       time: payload.time,
-      tags: payload.tags,            // Comma-separated string of tags
+      tags: payload.tags, // comma-separated string
       imageUrl: payload.imageUrl,
-      ingredientsText: payload.ingredientsText,     //NewLine-separated ingredients
-      instructionsText: payload.instructionsText,   //NewLine-separated instructions
+      ingredientsText: payload.ingredientsText,
+      instructionsText: payload.instructionsText,
     }),
   });
 
-  //The backend returns { recipe: { ... } }, so it pulls out just the recipe.
+  // Backend returns: { recipe: { id: <slug>, title, desc, time, tags, thumb } }
   return data.recipe;
 }
-/* 
-// Create a new recipe (saved in localStorage)
-export async function createRecipe(payload) {
-  await delay();
-
-  const extras = loadExtraRecipes();
-
-  const id =
-    payload.id ||
-    payload.slug ||
-    payload.title?.toLowerCase().replace(/\s+/g, "-") +
-      "-" +
-      Date.now().toString(36);
-
-  const newRecipe = {
-    id,
-    title: payload.title ?? "Untitled recipe",
-    time: payload.time ?? "",
-    tags: payload.tags ?? [],
-    desc: payload.desc ?? "",
-    thumb: payload.thumb ?? null,
-    ingredients: payload.ingredients ?? [],
-    instructions: payload.instructions ?? [],
-  };
-
-  extras.push(newRecipe);
-  saveExtraRecipes(extras);
-
-  return newRecipe;
-}
-*/
 
 // ----------------- Favorites API (per user via localStorage) -----------------
 
 // Get the current user's favorite recipes
 export async function getFavorites() {
-  await delay();
-
   const user = getCurrentUserSync();
   if (!user) return [];
 
-  const all = getAllRecipesInternal();
+  // Use searchRecipes so favorites can include remote submitted recipes.
+  const all = await searchRecipes({});
   const favoriteIds = loadFavoriteIdsForUser(user.id);
-
   return all.filter((r) => favoriteIds.includes(r.id));
 }
 
 // Add a recipe to the current user's favorites
 export async function addFavorite(recipeId) {
-  await delay();
-
   const user = getCurrentUserSync();
   if (!user) throw new Error("You must be logged in to favorite recipes.");
 
@@ -175,8 +147,6 @@ export async function addFavorite(recipeId) {
 
 // Remove a recipe from the current user's favorites
 export async function removeFavorite(recipeId) {
-  await delay();
-
   const user = getCurrentUserSync();
   if (!user) throw new Error("You must be logged in to update favorites.");
 
