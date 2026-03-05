@@ -1,0 +1,8 @@
+# Node / Vite
+node_modules/
+dist/
+.env
+
+# OS junk
+.DS_Store
+Thumbs.db
