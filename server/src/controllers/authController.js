@@ -4,6 +4,10 @@
  * Handles user signup, login, logout, and profile retrieval
  */
 
+const bcrypt = require("bcrypt");
+const pool = require("../config/database");
+const { generateToken } = require("../utils/jwt");
+
 function getAuthCookieOptions() {
   const isProd = process.env.NODE_ENV === 'production';
 
@@ -16,21 +20,6 @@ function getAuthCookieOptions() {
   };
 }
 
-const bcrypt = require("bcrypt");
-const pool = require("../config/database");
-const { generateToken } = require("../utils/jwt");
-
-function cookieOptions() {
-  const isProd = process.env.NODE_ENV === "production";
-
-  return {
-    httpOnly: true,
-    secure: isProd, // Render = production => true (required for SameSite=None)
-    sameSite: isProd ? "none" : "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  };
-}
-
 /**
  * Sign up a new user
  * POST /api/v1/auth/signup
@@ -39,7 +28,6 @@ async function signup(req, res) {
   try {
     const { email, username, password, display_name } = req.body;
 
-    // Check if email or username already exists
     const existingUser = await pool.query(
       "SELECT id, email, username FROM users WHERE email = $1 OR username = $2",
       [email, username]
@@ -74,10 +62,8 @@ async function signup(req, res) {
       });
     }
 
-    // Hash the password with bcrypt (10 salt rounds)
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // Insert the new user into database
     const result = await pool.query(
       `INSERT INTO users (email, username, password_hash, display_name)
        VALUES ($1, $2, $3, $4)
@@ -86,14 +72,10 @@ async function signup(req, res) {
     );
 
     const user = result.rows[0];
-
-    // Generate JWT token
     const token = generateToken(user);
 
-    // Set token cookie (cross-site safe in production)
     res.cookie('authToken', token, getAuthCookieOptions());
 
-    // Return user data (without password hash)
     res.status(201).json({
       user: {
         id: user.id,
@@ -122,7 +104,6 @@ async function login(req, res) {
   try {
     const { identifier, password } = req.body;
 
-    // Find user by email OR username
     const result = await pool.query(
       "SELECT * FROM users WHERE email = $1 OR username = $1",
       [identifier]
@@ -138,8 +119,6 @@ async function login(req, res) {
     }
 
     const user = result.rows[0];
-
-    // Compare password with hashed password
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
 
     if (!isPasswordValid) {
@@ -151,13 +130,10 @@ async function login(req, res) {
       });
     }
 
-    // Generate JWT token
     const token = generateToken(user);
 
-    // Set token cookie (cross-site safe in production)
     res.cookie('authToken', token, getAuthCookieOptions());
 
-    // Return user data
     res.status(200).json({
       user: {
         id: user.id,
@@ -183,7 +159,10 @@ async function login(req, res) {
  * POST /api/v1/auth/logout
  */
 function logout(req, res) {
-  res.clearCookie("authToken");
+  // Must pass the same options used when setting the cookie so the browser
+  // correctly identifies and removes it — especially critical in production
+  // where sameSite:'none' and secure:true are required for cross-origin cookies.
+  res.clearCookie("authToken", getAuthCookieOptions());
   res.status(204).send();
 }
 
@@ -194,7 +173,6 @@ function logout(req, res) {
  */
 async function getCurrentUser(req, res) {
   try {
-    // req.user is set by the requireAuth middleware
     const result = await pool.query(
       "SELECT id, email, username, display_name, created_at FROM users WHERE id = $1",
       [req.user.id]

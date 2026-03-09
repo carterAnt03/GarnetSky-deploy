@@ -5,19 +5,7 @@
 import { RECIPES } from "../data/recipes";
 import { api } from "../api";
 
-// Keys for localStorage
-const CURRENT_USER_KEY = "gs_currentUser";
-
 // ----------------- helpers -----------------
-
-function getCurrentUserSync() {
-  try {
-    const raw = localStorage.getItem(CURRENT_USER_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
 
 function favoriteKeyForUser(userId) {
   return `gs_favorites_${userId}`;
@@ -122,36 +110,35 @@ export async function createRecipe(payload) {
 // ----------------- Favorites API (per user via localStorage) -----------------
 
 // Get the current user's favorite recipes
-export async function getFavorites() {
-  const user = getCurrentUserSync();
-  if (!user) return [];
+// userId must be passed in from AuthContext — never read from localStorage
+export async function getFavorites(userId) {
+  if (!userId) return [];
 
-  // Use searchRecipes so favorites can include remote submitted recipes.
   const all = await searchRecipes({});
-  const favoriteIds = loadFavoriteIdsForUser(user.id);
+  const favoriteIds = loadFavoriteIdsForUser(userId);
   return all.filter((r) => favoriteIds.includes(r.id));
 }
 
 // Add a recipe to the current user's favorites
-export async function addFavorite(recipeId) {
-  const user = getCurrentUserSync();
-  if (!user) throw new Error("You must be logged in to favorite recipes.");
+// userId must be passed in from AuthContext — never read from localStorage
+export async function addFavorite(recipeId, userId) {
+  if (!userId) throw new Error("You must be logged in to favorite recipes.");
 
-  const ids = loadFavoriteIdsForUser(user.id);
+  const ids = loadFavoriteIdsForUser(userId);
   if (!ids.includes(recipeId)) {
     ids.push(recipeId);
-    saveFavoriteIdsForUser(user.id, ids);
+    saveFavoriteIdsForUser(userId, ids);
   }
   return true;
 }
 
 // Remove a recipe from the current user's favorites
-export async function removeFavorite(recipeId) {
-  const user = getCurrentUserSync();
-  if (!user) throw new Error("You must be logged in to update favorites.");
+// userId must be passed in from AuthContext — never read from localStorage
+export async function removeFavorite(recipeId, userId) {
+  if (!userId) throw new Error("You must be logged in to update favorites.");
 
-  let ids = loadFavoriteIdsForUser(user.id);
+  let ids = loadFavoriteIdsForUser(userId);
   ids = ids.filter((id) => id !== recipeId);
-  saveFavoriteIdsForUser(user.id, ids);
+  saveFavoriteIdsForUser(userId, ids);
   return true;
 }

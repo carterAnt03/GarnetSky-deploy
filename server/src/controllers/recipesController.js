@@ -98,7 +98,6 @@ async function getRecipeBySlug(req, res) {
 async function createRecipe(req, res) {
   try {
     const {
-      authorId,
       title,
       desc,
       time,
@@ -108,11 +107,14 @@ async function createRecipe(req, res) {
       instructionsText
     } = req.body;
 
-    if (!authorId || !title || !desc) {
+    // Always use the authenticated user's ID from the JWT — never trust the client
+    const authorId = req.user.id;
+
+    if (!title || !desc) {
       return res.status(400).json({
         error: {
           code: 'VALIDATION_ERROR',
-          message: 'authorId, title, and desc are required'
+          message: 'title and desc are required'
         }
       });
     }
