@@ -19,7 +19,7 @@ export default function Favorites() {
         setLoading(true);
         setError("");
 
-        const list = await getFavorites(user.id);
+        const list = await getFavorites();
         if (!cancelled) {
           setFavorites(list);
         }
