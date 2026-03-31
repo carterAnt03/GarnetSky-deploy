@@ -62,6 +62,7 @@ npm run test:ui:watch  # Run UI tests in watch mode
 Testing
 Test again
 Text for Carter
+Beta text
 
 ---
 
