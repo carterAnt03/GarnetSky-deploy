@@ -16,6 +16,12 @@ const recipeRoutes = require("./routes/recipeRoutes");
 function createApp() {
   const app = express();
 
+  // Log every incoming request before any middleware
+  app.use((req, res, next) => {
+    console.log(`INCOMING: ${req.method} ${req.path} origin=${req.headers.origin}`);
+    next();
+  });
+
   // Basic security & parsing middleware
   app.use(helmet());
   app.use(express.json());
