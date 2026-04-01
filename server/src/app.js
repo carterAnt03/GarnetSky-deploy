@@ -71,6 +71,12 @@ function createApp() {
     res.json({ status: "ok" });
   });
 
+  // Request logging
+  app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path} | origin: ${req.headers.origin} | body: ${JSON.stringify(req.body)}`);
+    next();
+  });
+
   // Routes
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/recipes", recipeRoutes);
