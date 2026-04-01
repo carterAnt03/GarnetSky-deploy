@@ -1,4 +1,4 @@
-const { pool } = require('../db');
+const pool = require('../config/database');
 
   async function addFavorite(req, res) {
     const { recipeId } = req.params; // this is actually the slug
