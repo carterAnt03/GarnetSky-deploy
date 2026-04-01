@@ -123,35 +123,18 @@ export async function createRecipe(payload) {
 
 // Get the current user's favorite recipes
 export async function getFavorites() {
-  const user = getCurrentUserSync();
-  if (!user) return [];
-
-  // Use searchRecipes so favorites can include remote submitted recipes.
-  const all = await searchRecipes({});
-  const favoriteIds = loadFavoriteIdsForUser(user.id);
-  return all.filter((r) => favoriteIds.includes(r.id));
-}
+    const data = await apiFetch('/api/v1/favorites');
+    return data.recipes;
+  }
 
 // Add a recipe to the current user's favorites
 export async function addFavorite(recipeId) {
-  const user = getCurrentUserSync();
-  if (!user) throw new Error("You must be logged in to favorite recipes.");
-
-  const ids = loadFavoriteIdsForUser(user.id);
-  if (!ids.includes(recipeId)) {
-    ids.push(recipeId);
-    saveFavoriteIdsForUser(user.id, ids);
+    await apiFetch(`/api/v1/favorites/${recipeId}`, { method: 'POST' });
   }
-  return true;
-}
 
 // Remove a recipe from the current user's favorites
 export async function removeFavorite(recipeId) {
-  const user = getCurrentUserSync();
-  if (!user) throw new Error("You must be logged in to update favorites.");
+    await apiFetch(`/api/v1/favorites/${recipeId}`, { method: 'DELETE' });
+  }
 
-  let ids = loadFavoriteIdsForUser(user.id);
-  ids = ids.filter((id) => id !== recipeId);
-  saveFavoriteIdsForUser(user.id, ids);
-  return true;
-}
+  

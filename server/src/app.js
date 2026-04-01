@@ -12,6 +12,7 @@ require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
 const recipeRoutes = require("./routes/recipeRoutes");
+const favoritesRoutes = require("./routes/favoritesRoutes");
 
 function createApp() {
   const app = express();
@@ -74,6 +75,7 @@ function createApp() {
   // Routes
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/recipes", recipeRoutes);
+  app.use("/api/v1/favorites", favoritesRoutes);
 
   // Generic error handler
   // eslint-disable-next-line no-unused-vars
