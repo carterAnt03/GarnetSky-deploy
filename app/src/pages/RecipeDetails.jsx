@@ -1,7 +1,7 @@
 // src/pages/RecipeDetails.jsx
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
   getRecipe,
   getFavorites,
@@ -16,6 +16,7 @@ export default function RecipeDetails() {
   const { user } = useAuth();
 
   const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
   const [favBusy, setFavBusy] = useState(false);
@@ -26,14 +27,18 @@ export default function RecipeDetails() {
     async function loadRecipeAndFavoriteState() {
       try {
         setError("");
+        setLoading(true);
+        setRecipe(null);
 
-        // 1. Load the recipe
+        if (!id || id === "undefined" || id === "null") {
+          throw new Error("Invalid recipe link.");
+        }
+
         const data = await getRecipe(id);
         if (!cancelled) {
           setRecipe(data);
         }
 
-        // 2. Load favorites (if logged in) and see if this one is included
         if (user) {
           try {
             const favorites = await getFavorites();
@@ -43,7 +48,6 @@ export default function RecipeDetails() {
             }
           } catch (favErr) {
             console.error("Failed to load favorites", favErr);
-            // don't block page load if favorites fail
           }
         } else {
           if (!cancelled) setIsFavorite(false);
@@ -52,6 +56,10 @@ export default function RecipeDetails() {
         console.error(err);
         if (!cancelled) {
           setError(err.message || "Error loading recipe.");
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
         }
       }
     }
@@ -88,11 +96,31 @@ export default function RecipeDetails() {
     }
   }
 
+  if (loading) {
+    return (
+      <main>
+        <section className="section">
+          <p>Loading recipe…</p>
+        </section>
+      </main>
+    );
+  }
+
   if (error && !recipe) {
     return (
       <main>
         <section className="section">
-          <p className="error-text">{error}</p>
+          <p className="error-text" style={{ marginBottom: "1rem" }}>{error}</p>
+          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+            <button
+              className="pill-btn"
+              type="button"
+              onClick={() => window.location.reload()}
+            >
+              Try again
+            </button>
+            <Link className="pill-btn" to="/search">Browse recipes</Link>
+          </div>
         </section>
       </main>
     );
@@ -102,12 +130,16 @@ export default function RecipeDetails() {
     return (
       <main>
         <section className="section">
-          <p>Loading recipe…</p>
+          <h1 className="page-title">Recipe not found</h1>
+          <p className="muted" style={{ marginBottom: "1rem" }}>
+            We couldn't find a recipe with that ID.
+          </p>
+          <Link className="pill-btn" to="/search">Browse recipes</Link>
         </section>
       </main>
     );
   }
-  // Detect cuisine from tags to apply the matching color theme to the page
+
   const cuisineClass = getCuisineClass(recipe.tags);
 
     return (
@@ -122,12 +154,10 @@ export default function RecipeDetails() {
           <div>
             <h1 className="page-title">{recipe.title}</h1>
 
-            {/* time + tags / meta */}
               <p className="muted">
                 {recipe.time && <>Time: {recipe.time}</>}
               </p>
 
-              {/* Render each tag as a styled pill — cuisine tags get accent color */}
               {recipe.tags && recipe.tags.length > 0 && (
                 <div style={{ marginTop: "0.5rem" }}>
                   {recipe.tags.map((tag) => (
@@ -138,7 +168,6 @@ export default function RecipeDetails() {
                 </div>
               )}
 
-            {/* Favorite button */}
             <div style={{ marginTop: "0.9rem", display: "flex", gap: "0.5rem" }}>
               <button
                 className="primary"
@@ -154,7 +183,6 @@ export default function RecipeDetails() {
               </button>
             </div>
 
-            {/* 3.1 – rich description */}
             {recipe.desc && (
               <p style={{ marginTop: "1rem", lineHeight: 1.5 }}>
                 {recipe.desc}
@@ -163,7 +191,6 @@ export default function RecipeDetails() {
           </div>
         </div>
 
-        {/* 3.3 – Ingredients list */}
         <section className="card cream">
           <h2>Ingredients</h2>
           {recipe.ingredients && recipe.ingredients.length > 0 ? (
@@ -177,7 +204,6 @@ export default function RecipeDetails() {
           )}
         </section>
 
-        {/* 3.2 – Step-by-step tutorial */}
         <section className="card rose">
           <h2>Step-by-step instructions</h2>
           {recipe.instructions && recipe.instructions.length > 0 ? (

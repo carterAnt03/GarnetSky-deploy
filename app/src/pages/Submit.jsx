@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { createRecipe } from "../services/recipeService";
 
 export default function SubmitPage() {
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -16,8 +15,22 @@ export default function SubmitPage() {
   const [instructionsText, setInstructionsText] = useState("");
   const [error, setError] = useState("");
   const [status, setStatus] = useState("idle"); // idle | submitting | success
+  const [createdRecipe, setCreatedRecipe] = useState(null);
 
   const isSubmitting = status === "submitting";
+
+  function resetForm() {
+    setTitle("");
+    setDesc("");
+    setTime("");
+    setTags("");
+    setImageUrl("");
+    setIngredientsText("");
+    setInstructionsText("");
+    setError("");
+    setStatus("idle");
+    setCreatedRecipe(null);
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -37,25 +50,57 @@ export default function SubmitPage() {
       setStatus("submitting");
 
       const recipe = await createRecipe({
-        authorId: user.id,        // 👈 from AuthContext
+        authorId: user.id,
         title: title.trim(),
         desc: desc.trim(),
         time: time.trim() || null,
-        tags: tags,               // backend will split this
+        tags: tags,
         imageUrl: imageUrl.trim() || null,
         ingredientsText,
         instructionsText,
       });
 
-      setStatus("success");
+      if (!recipe || !recipe.id) {
+        throw new Error(
+          "The recipe was saved but the server returned an unexpected response. " +
+          "Check the Search page — your recipe should appear there."
+        );
+      }
 
-      // Navigate to the new recipe detail page
-      navigate(`/recipe/${recipe.id}`);
+      setCreatedRecipe(recipe);
+      setStatus("success");
     } catch (err) {
       console.error(err);
       setStatus("idle");
       setError(err.message || "Failed to submit recipe.");
     }
+  }
+
+  // Success screen after recipe is saved
+  if (status === "success" && createdRecipe) {
+    return (
+      <main>
+        <section className="section">
+          <h1 className="page-title">Recipe Published!</h1>
+          <div className="card cream" style={{ maxWidth: 600, margin: "0 auto" }}>
+            <p style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>
+              <strong>{createdRecipe.title}</strong> has been saved successfully.
+            </p>
+            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+              <Link className="pill-btn" to={`/recipe/${createdRecipe.id}`}>
+                View recipe
+              </Link>
+              <Link className="pill-btn" to="/search">
+                Browse all recipes
+              </Link>
+              <button className="pill-btn" type="button" onClick={resetForm}>
+                Submit another recipe
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
   }
 
   return (
