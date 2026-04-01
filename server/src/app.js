@@ -43,6 +43,9 @@ function createApp() {
 
         if (allowedOrigins.includes(origin)) return cb(null, true);
 
+        // Allow all Vercel preview deployments
+        if (/https:\/\/garnet-sky-deploy.*\.vercel\.app$/.test(origin)) return cb(null, true);
+
         return cb(new Error(`CORS blocked for origin: ${origin}`));
       },
       credentials: true,
