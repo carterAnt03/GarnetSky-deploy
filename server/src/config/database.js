@@ -12,10 +12,10 @@ require('dotenv').config();
 // A pool manages multiple database connections efficiently
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  // Connection pool settings
-  max: 20, // Maximum number of clients in the pool
-  idleTimeoutMillis: 30000, // How long a client can be idle before being closed
-  connectionTimeoutMillis: 2000, // How long to wait for a connection
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
 });
 
 // Test the connection
