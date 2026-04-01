@@ -152,15 +152,27 @@ export default function SubmitPage() {
                 />
               </label>
 
-              <label>
+               <label>                                                                                          
                 Image URL
                 <input
-                  type="text"
+                  type="url"
                   placeholder="https://example.com/my-delicious-pasta.jpg"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
                 />
               </label>
+
+              {imageUrl && (
+                <div style={{ marginTop: "0.5rem" }}>
+                  <img
+                    src={imageUrl}
+                    alt="Recipe preview"
+                    onError={(e) => (e.target.style.display = "none")}
+                    onLoad={(e) => (e.target.style.display = "block")}
+                    style={{ maxWidth: "100%", maxHeight: "200px", borderRadius: "8px", display: "none" }}
+                  />
+                </div>
+              )}
 
               <label>
                 Ingredients <span style={{ fontSize: "0.85rem", color: "#6b7280" }}>
