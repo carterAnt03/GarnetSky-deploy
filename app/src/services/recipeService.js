@@ -123,18 +123,18 @@ export async function createRecipe(payload) {
 
 // Get the current user's favorite recipes
 export async function getFavorites() {
-    const data = await apiFetch('/api/v1/favorites');
+    const data = await api('/api/v1/favorites');
     return data.recipes;
   }
 
 // Add a recipe to the current user's favorites
 export async function addFavorite(recipeId) {
-    await apiFetch(`/api/v1/favorites/${recipeId}`, { method: 'POST' });
+    await api(`/api/v1/favorites/${recipeId}`, { method: 'POST' });
   }
 
 // Remove a recipe from the current user's favorites
 export async function removeFavorite(recipeId) {
-    await apiFetch(`/api/v1/favorites/${recipeId}`, { method: 'DELETE' });
+    await api(`/api/v1/favorites/${recipeId}`, { method: 'DELETE' });
   }
 
   
