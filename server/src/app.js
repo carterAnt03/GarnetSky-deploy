@@ -16,12 +16,6 @@ const recipeRoutes = require("./routes/recipeRoutes");
 function createApp() {
   const app = express();
 
-  // Log every incoming request before any middleware
-  app.use((req, res, next) => {
-    console.log(`INCOMING: ${req.method} ${req.path} origin=${req.headers.origin}`);
-    next();
-  });
-
   // Basic security & parsing middleware
   app.use(helmet());
   app.use(express.json());
@@ -75,12 +69,6 @@ function createApp() {
   // Add this so the frontend's GET /api/v1/status works
   app.get("/api/v1/status", (req, res) => {
     res.json({ status: "ok" });
-  });
-
-  // Request logging
-  app.use((req, res, next) => {
-    console.log(`${req.method} ${req.path} | origin: ${req.headers.origin} | body: ${JSON.stringify(req.body)}`);
-    next();
   });
 
   // Routes
