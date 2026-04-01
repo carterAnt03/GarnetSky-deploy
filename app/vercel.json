@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://garnetsky.onrender.com/api/:path*" },
+    { "source": "/api/:path*", "destination": "https://garnetsky-mjda.onrender.com/api/:path*" },
     { "source": "/(.*)", "destination": "/" }
   ]
 }
