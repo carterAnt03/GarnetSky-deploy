@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import RecipeCard from "../components/RecipeCard";
-import { RECIPES } from "../data/recipes";
 import { searchRecipes } from "../services/recipeService";
-
-const TAGS = Array.from(new Set(RECIPES.flatMap((r) => r.tags || [])));
 
 export default function Search() {
   const [q, setQ] = useState("");
   const [tag, setTag] = useState("");
   const [results, setResults] = useState([]);
+  const [allTags, setAllTags] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
 
@@ -21,7 +19,12 @@ export default function Search() {
 
     searchRecipes({ query: q, tag })
       .then((list) => {
-        if (!ignore) setResults(list);
+        if (!ignore) {
+          setResults(list);
+          if (!q && !tag) {
+            setAllTags(Array.from(new Set(list.flatMap((r) => r.tags || []))).sort());
+          }
+        }
       })
       .catch((err) => {
         console.error(err);
@@ -76,7 +79,7 @@ export default function Search() {
             Filter by tag:&nbsp;
             <select value={tag} onChange={(e) => setTag(e.target.value)}>
               <option value="">All tags</option>
-              {TAGS.map((t) => (
+              {allTags.map((t) => (
                 <option key={t} value={t}>
                   {t}
                 </option>

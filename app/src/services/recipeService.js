@@ -1,60 +1,10 @@
 // src/services/recipeService.js
-// Recipes are fetched from the backend API, with a fallback to local demo data.
-// Favorites are stored client-side (localStorage) for the beta milestone.
 
-import { RECIPES } from "../data/recipes";
 import { api } from "../api";
 
-// Keys for localStorage
-const CURRENT_USER_KEY = "gs_currentUser";
+// ----------------- Recipes API -----------------
 
-// ----------------- helpers -----------------
-
-function getCurrentUserSync() {
-  try {
-    const raw = localStorage.getItem(CURRENT_USER_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-function favoriteKeyForUser(userId) {
-  return `gs_favorites_${userId}`;
-}
-
-function loadFavoriteIdsForUser(userId) {
-  try {
-    const raw = localStorage.getItem(favoriteKeyForUser(userId));
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveFavoriteIdsForUser(userId, ids) {
-  localStorage.setItem(favoriteKeyForUser(userId), JSON.stringify(ids));
-}
-
-function filterLocalRecipes({ query = "", tag = "" } = {}) {
-  const q = query.trim().toLowerCase();
-  const t = tag.trim().toLowerCase();
-
-  return RECIPES.filter((r) => {
-    const matchesQuery =
-      !q ||
-      r.title.toLowerCase().includes(q) ||
-      (r.desc && r.desc.toLowerCase().includes(q)) ||
-      (r.tags && r.tags.some((tg) => tg.toLowerCase().includes(q)));
-
-    const matchesTag =
-      !t || (r.tags && r.tags.some((tg) => tg.toLowerCase() === t));
-
-    return matchesQuery && matchesTag;
-  });
-}
-
-async function listRemoteRecipes({ query = "", tag = "" } = {}) {
+export async function searchRecipes({ query = "", tag = "" } = {}) {
   const params = new URLSearchParams();
   if (query && query.trim()) params.set("q", query.trim());
   if (tag && tag.trim()) params.set("tag", tag.trim());
@@ -64,35 +14,7 @@ async function listRemoteRecipes({ query = "", tag = "" } = {}) {
   return Array.isArray(data?.recipes) ? data.recipes : [];
 }
 
-// ----------------- Recipes API -----------------
-
-// Search recipes by query + tag
-// - Remote recipes are authoritative for submitted content
-// - Local RECIPES are used as a demo fallback
-export async function searchRecipes({ query = "", tag = "" } = {}) {
-  try {
-    const [remote, local] = await Promise.all([
-      listRemoteRecipes({ query, tag }),
-      Promise.resolve(filterLocalRecipes({ query, tag })),
-    ]);
-
-    // Merge, preferring remote when IDs collide
-    const merged = new Map();
-    for (const r of local) merged.set(r.id, r);
-    for (const r of remote) merged.set(r.id, r);
-    return Array.from(merged.values());
-  } catch (err) {
-    console.warn("searchRecipes: remote failed, falling back to local", err);
-    return filterLocalRecipes({ query, tag });
-  }
-}
-
-// Get a single recipe by ID (slug)
-// First try local demo data; if not found, fetch from backend.
 export async function getRecipe(id) {
-  const local = RECIPES.find((r) => r.id === id);
-  if (local) return local;
-
   const data = await api(`/api/v1/recipes/${encodeURIComponent(id)}`);
   if (!data?.recipe) throw new Error("Recipe not found.");
   return data.recipe;
