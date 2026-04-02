@@ -8,7 +8,7 @@ import { api } from "../api";
 export async function getCurrentUser() {
   try {
     const data = await api("/api/v1/auth/me");
-    return { id: data.user.id, username: data.user.username}
+    return { id: data.user.id, username: data.user.username, role: data.user.role }
   } catch {
     //No active session - user is not logged in
     return null;
@@ -22,7 +22,7 @@ export async function signUp({email,username,password}) {
   body: JSON.stringify({ email, username, password }),
   });
 
-  return { id: data.user.id, username: data.user.username}
+  return { id: data.user.id, username: data.user.username, role: data.user.role }
 }
 
 // Log in with email or username + password
@@ -32,7 +32,7 @@ export async function logIn({ identifier, password }) {
     body: JSON.stringify({ identifier, password }),
   });
 
-  return { id: data.user.id, username: data.user.username}
+  return { id: data.user.id, username: data.user.username, role: data.user.role }
 }
 
 // Log out - clears the JWT cookie on the backend
