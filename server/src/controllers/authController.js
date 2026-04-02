@@ -113,8 +113,8 @@
       if (result.rows.length === 0) {                                                                                                        
         return res.status(401).json({
           error: {                                                                                                                           
-            code: "INVALID_CREDENTIALS",                          
-            message: "Invalid email or password",
+            code: "USER_NOT_FOUND",
+            message: "No account found with that email or username.",
           },
         });
       }
@@ -125,10 +125,10 @@
       if (!isPasswordValid) {                                     
         return res.status(401).json({
           error: {
-            code: "INVALID_CREDENTIALS",
-            message: "Invalid email or password",                                                                                            
+            code: "INVALID_PASSWORD",
+            message: "Incorrect password.",
           },
-        });                                                                                                                                  
+        });
       }                                                           
 
       const token = generateToken(user);
