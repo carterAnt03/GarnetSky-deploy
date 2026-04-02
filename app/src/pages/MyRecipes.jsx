@@ -37,7 +37,7 @@ import { useEffect, useState } from "react";
           )}
           <div className="recipe-grid">
             {recipes.map((r) => (
-              <RecipeCard key={r.id} recipe={r} />
+              <RecipeCard key={r.id} r={r} />
             ))}
           </div>
         </section>
