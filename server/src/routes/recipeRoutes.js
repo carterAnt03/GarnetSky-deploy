@@ -3,6 +3,7 @@ const {
   listRecipes,
   getRecipeBySlug,
   createRecipe,
+  getMyRecipes,
   deleteRecipe,
 } = require('../controllers/recipesController');
 
@@ -16,6 +17,9 @@ router.get('/', listRecipes);
 
 // Create recipe
 router.post('/', requireAuth, createRecipe);
+
+// Get current user's recipes
+router.get('/mine', requireAuth, getMyRecipes);
 
 // Get recipe by slug
 router.get('/:slug', getRecipeBySlug);

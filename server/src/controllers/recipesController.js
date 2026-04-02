@@ -1,4 +1,5 @@
 const pool = require('../config/database');
+const { get } = require('../routes/favoritesRoutes');
 
 async function listRecipes(req, res) {
   try {
@@ -203,10 +204,33 @@ async function deleteRecipe(req, res) {
   }
 }
 
+async function getMyRecipes(req, res) {
+    try {
+      const result = await pool.query(
+        'SELECT slug, title, description, time, tags, thumb FROM recipes WHERE author_id = $1 ORDER BY id DESC',
+        [req.user.id]
+      );
+      const recipes = result.rows.map(row => ({
+        id: row.slug,
+        title: row.title,
+        desc: row.description,
+        time: row.time,
+        tags: row.tags || [],
+        thumb: row.thumb,
+      }));
+      res.json({ recipes });
+    } catch (err) {
+      console.error('getMyRecipes error:', err);
+      res.status(500).json({ error: { code: 'SERVER_ERROR', message: 'Failed to fetch your recipes'
+   } });
+    }
+  }
+
 module.exports = {
   listRecipes,
   getRecipeBySlug,
   createRecipe,
+  getMyRecipes,
   deleteRecipe
 };
 

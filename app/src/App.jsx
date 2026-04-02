@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import RecipeDetails from "./pages/RecipeDetails";
 import RecipeOfTheDay from "./pages/RecipeOfTheDay";
+import MyRecipes from "./pages/MyRecipes";
 import Admin from "./pages/Admin";
 
 // Optional: keep your API test page accessible at /__test
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/recipe-of-the-day" element={<RecipeOfTheDay />} />
             <Route path="/recipe/:id" element={<RecipeDetails />} />
+            <Route path="/my-recipes" element={<MyRecipes />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
 
