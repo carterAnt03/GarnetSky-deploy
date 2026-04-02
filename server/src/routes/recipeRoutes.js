@@ -3,6 +3,7 @@ const {
   listRecipes,
   getRecipeBySlug,
   createRecipe,
+  deleteRecipe,
 } = require('../controllers/recipesController');
 
 const { requireAuth } = require('../middleware/auth');
@@ -18,5 +19,7 @@ router.post('/', requireAuth, createRecipe);
 
 // Get recipe by slug
 router.get('/:slug', getRecipeBySlug);
+
+router.delete('/:slug', requireAuth, deleteRecipe);
 
 module.exports = router;

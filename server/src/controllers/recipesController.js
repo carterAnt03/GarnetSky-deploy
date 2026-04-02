@@ -57,16 +57,16 @@ async function getRecipeBySlug(req, res) {
     const { slug } = req.params;
 
     const result = await pool.query(
-      'SELECT * FROM recipes WHERE slug = $1',
+      `SELECT r.*, u.username AS author_username
+         FROM recipes r                                                                            
+         LEFT JOIN users u ON u.id = r.author_id                  
+         WHERE r.slug = $1`,
       [slug]
     );
 
     if (result.rows.length === 0) {
       return res.status(404).json({
-        error: {
-          code: 'RECIPE_NOT_FOUND',
-          message: 'Recipe not found'
-        }
+        error: { code: 'RECIPE_NOT_FOUND', message: 'Recipe not found' }
       });
     }
 
@@ -80,17 +80,16 @@ async function getRecipeBySlug(req, res) {
       tags: row.tags || [],
       thumb: row.thumb,
       ingredients: row.ingredients || [],
-      instructions: row.instructions || []
+      instructions: row.instructions || [],
+      authorId: row.author_id,
+      authorUsername: row.author_username,
     };
 
     res.json({ recipe });
   } catch (err) {
     console.error('getRecipeBySlug error:', err);
     res.status(500).json({
-      error: {
-        code: 'SERVER_ERROR',
-        message: 'An error occurred while fetching the recipe'
-      }
+      error: { code: 'SERVER_ERROR', message: 'An error occurred while fetching the recipe' }
     });
   }
 }
@@ -180,8 +179,35 @@ async function createRecipe(req, res) {
   }
 }
 
+async function deleteRecipe(req, res) {
+  const { slug } = req.params;
+  const userId = req.user.id;
+  try {
+    const result = await pool.query(
+      'SELECT author_id FROM recipes WHERE slug = $1',
+      [slug]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Recipe not found' } });
+    }
+    if (result.rows[0].author_id !== userId) {
+      return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Not your recipe' } });
+    }
+    await pool.query('DELETE FROM recipes WHERE slug = $1', [slug]);
+    res.status(200).json({ deleted: true });
+  } catch (err) {
+    console.error('deleteRecipe error:', err);
+    res.status(500).json({
+      error: { code: 'SERVER_ERROR', message: 'Failed to delete recipe' }
+    });
+  }
+}
+
 module.exports = {
   listRecipes,
   getRecipeBySlug,
-  createRecipe
+  createRecipe,
+  deleteRecipe
 };
+
+

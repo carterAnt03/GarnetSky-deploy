@@ -137,4 +137,8 @@ export async function removeFavorite(recipeId) {
     await api(`/api/v1/favorites/${recipeId}`, { method: 'DELETE' });
   }
 
+export async function deleteRecipe(recipeId) {
+    await api(`/api/v1/recipes/${recipeId}`, { method: 'DELETE' });                                
+  }
+
   

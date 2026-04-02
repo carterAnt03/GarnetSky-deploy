@@ -1,12 +1,13 @@
 // src/pages/RecipeDetails.jsx
 
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   getRecipe,
   getFavorites,
   addFavorite,
   removeFavorite,
+  deleteRecipe,
 } from "../services/recipeService";
 import { useAuth } from "../context/AuthContext";
 import { getCuisineClass } from "../theme/cuisineThemes";
@@ -20,6 +21,18 @@ export default function RecipeDetails() {
   const [error, setError] = useState("");
   const [isFavorite, setIsFavorite] = useState(false);
   const [favBusy, setFavBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+  const navigate = useNavigate();
+
+  async function handleDelete() {
+    if (!window.confirm("Are you sure you want to delete this recipe?")) return;
+    try {
+      await deleteRecipe(id);
+      navigate("/");
+    } catch (err) {
+      setDeleteError(err.message || "Failed to delete recipe.");
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -154,6 +167,12 @@ export default function RecipeDetails() {
           <div>
             <h1 className="page-title">{recipe.title}</h1>
 
+            {recipe.authorUsername && (
+              <p className="muted" style={{ marginTop: "0.25rem" }}>
+                By {recipe.authorUsername}
+              </p>
+            )}
+
               <p className="muted">
                 {recipe.time && <>Time: {recipe.time}</>}
               </p>
@@ -181,7 +200,18 @@ export default function RecipeDetails() {
                   ? "Remove from favorites"
                   : "Add to favorites"}
               </button>
+              {user && recipe.authorId === user.id && (
+                <button
+                  className="primary"
+                  type="button"
+                  onClick={handleDelete}
+                  style={{ background: "#c0392b" }}
+                >
+                  Delete Recipe
+                </button>
+              )}
             </div>
+            {deleteError && <p className="error-text">{deleteError}</p>}
 
             {recipe.desc && (
               <p style={{ marginTop: "1rem", lineHeight: 1.5 }}>
