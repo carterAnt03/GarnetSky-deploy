@@ -51,6 +51,8 @@ import { useEffect, useState } from "react";
       }
     }
 
+    if (!user) return null;
+
     return (
       <main>
         <section className="section">
