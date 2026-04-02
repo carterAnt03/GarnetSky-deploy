@@ -33,6 +33,7 @@ function requireAuth(req, res, next) {
       id: decoded.userId,
       email: decoded.email,
       username: decoded.username,
+      role: decoded.role,
     };
 
     // Continue to the next middleware/route handler
@@ -60,6 +61,8 @@ function optionalAuth(req, res, next) {
       req.user = {
         id: decoded.userId,
         email: decoded.email,
+        username: decoded.username,
+        role: decoded.role,
       };
     }
   } catch (error) {
@@ -70,7 +73,17 @@ function optionalAuth(req, res, next) {
   next();
 }
 
+function isAdmin(req, res, next) {
+  if (req.user?.role !== 'admin') {
+      return res.status(403).json({
+        error: { code: 'FORBIDDEN', message: 'Admin access required' }
+      });
+    }
+    next();
+  }
+
 module.exports = {
   requireAuth,
   optionalAuth,
+  isAdmin
 };

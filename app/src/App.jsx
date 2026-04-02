@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import RecipeDetails from "./pages/RecipeDetails";
 import RecipeOfTheDay from "./pages/RecipeOfTheDay";
+import Admin from "./pages/Admin";
 
 // Optional: keep your API test page accessible at /__test
 import TestApi from "./pages/TestApi";
@@ -46,6 +47,8 @@ export default function App() {
 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+
+            <Route path="/admin" element={<Admin />} />
 
             {/* Keep your test harness here */}
             <Route path="/__test" element={<TestApi />} />

@@ -67,7 +67,7 @@
       const result = await pool.query(
         `INSERT INTO users (email, username, password_hash, display_name)
          VALUES ($1, $2, $3, $4)                                                                                                             
-         RETURNING id, email, username, display_name, created_at`,
+         RETURNING id, email, username, display_name, role, created_at`,
         [email, username, passwordHash, display_name || null]                                                                                
       );                                                                                                                                     
    
@@ -82,6 +82,7 @@
           email: user.email,
           username: user.username,
           display_name: user.display_name,
+          role: user.role,
           created_at: user.created_at,                                                                                                       
         },
       });                                                                                                                                    
@@ -139,7 +140,8 @@
           id: user.id,                                                                                                                       
           email: user.email,
           username: user.username,                                                                                                           
-          display_name: user.display_name,                        
+          display_name: user.display_name,
+          role: user.role,                        
           created_at: user.created_at,
         },
       });
@@ -171,7 +173,7 @@
   async function getCurrentUser(req, res) {
     try {                                                                                                                                    
       const result = await pool.query(                            
-        "SELECT id, email, username, display_name, created_at FROM users WHERE id = $1",
+        "SELECT id, email, username, display_name, role, created_at FROM users WHERE id = $1",
         [req.user.id]
       );                                                                                                                                     
    

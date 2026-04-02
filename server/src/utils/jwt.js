@@ -21,6 +21,7 @@ function generateToken(user) {
     userId: user.id,
     email: user.email,
     username: user.username,
+    role: user.role,
   };
 
   // Sign the token with our secret key

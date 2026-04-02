@@ -40,6 +40,7 @@ export default function NavBar() {
 
           {user ? (
             <>
+              {user.role === "admin" && <Tab to="/admin">Admin</Tab>}
               <span className="pill pill-plain">Hi, {user.username}</span>
               <button
                 className="pill pill-outline"
