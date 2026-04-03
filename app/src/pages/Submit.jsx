@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { createRecipe } from "../services/recipeService";
 
 export default function SubmitPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -106,6 +107,7 @@ export default function SubmitPage() {
   return (
     <main>
       <section className="section">
+        <button className="pill-btn" type="button" onClick={() => navigate(-1)}>← Back</button>
         <h1 className="page-title">New Recipe</h1>
 
         <div className="submit-wrap">
