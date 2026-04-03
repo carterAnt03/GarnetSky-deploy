@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 export default function Search() {
   const { user } = useAuth();
   const [q, setQ] = useState("");
+  const [activeQ, setActiveQ] = useState("");
   const [tag, setTag] = useState("");
   const [results, setResults] = useState([]);
   const [allTags, setAllTags] = useState([]);
@@ -20,11 +21,11 @@ export default function Search() {
     setLoading(true);
     setPage(1);
 
-    searchRecipes({ query: q, tag })
+    searchRecipes({ query: activeQ, tag })
       .then((list) => {
         if (!ignore) {
           setResults(list);
-          if (!q && !tag) {
+          if (!activeQ && !tag) {
             setAllTags(Array.from(new Set(list.flatMap((r) => r.tags || []))).sort());
           }
         }
@@ -37,19 +38,30 @@ export default function Search() {
         if (!ignore) setLoading(false);
       });
 
-    return () => {
-      ignore = true;
-    };
-  }, [q, tag]);
+    return () => { ignore = true; };
+  }, [activeQ, tag]);
+
+  function handleSearch() {
+    setActiveQ(q);
+    setPage(1);
+  }
+
+  function handleKeyDown(e) {
+    if (e.key === "Enter") handleSearch();
+  }
+
+  function handleClear() {
+    setQ("");
+    setActiveQ("");
+    setPage(1);
+  }
 
   const hasResults = results.length > 0;
   const totalPages = hasResults ? Math.ceil(results.length / PAGE_SIZE) : 1;
   const startIndex = (page - 1) * PAGE_SIZE;
   const pageItems = results.slice(startIndex, startIndex + PAGE_SIZE);
   const showingFrom = hasResults ? startIndex + 1 : 0;
-  const showingTo = hasResults
-    ? Math.min(results.length, startIndex + PAGE_SIZE)
-    : 0;
+  const showingTo = hasResults ? Math.min(results.length, startIndex + PAGE_SIZE) : 0;
 
   return (
     <main>
@@ -60,43 +72,56 @@ export default function Search() {
         </div>
 
         <div className="search-bar">
-          <input
-            type="search"
-            placeholder="Search by name, description, or tag…"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-          />
-          <button
-            type="button"
-            className="pill-btn"
-            onClick={() => setQ("")}
-            disabled={!q}
-          >
+          <div className="search-input-wrap">
+            <span className="search-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+            <input
+              type="search"
+              placeholder="Search by name, description, or tag…"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              onKeyDown={handleKeyDown}
+            />
+          </div>
+          <button type="button" className="pill-btn primary" onClick={handleSearch}>
+            Search
+          </button>
+          <button type="button" className="pill-btn" onClick={handleClear} disabled={!q && !activeQ}>
             Clear
           </button>
         </div>
 
-        <div className="search-filters">
-          <label>
-            Filter by tag:&nbsp;
-            <select value={tag} onChange={(e) => setTag(e.target.value)}>
-              <option value="">All tags</option>
-              {allTags.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+        {allTags.length > 0 && (
+          <div className="tag-filters">
+            <button
+              type="button"
+              className={`pill-btn ${tag === "" ? "primary" : ""}`}
+              onClick={() => setTag("")}
+            >
+              All
+            </button>
+            {allTags.map((t) => (
+              <button
+                key={t}
+                type="button"
+                className={`pill-btn ${tag === t ? "primary" : ""}`}
+                onClick={() => setTag(tag === t ? "" : t)}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="search-meta">
           {loading ? (
             <span>Loading results…</span>
           ) : hasResults ? (
-            <span>
-              Showing {showingFrom}–{showingTo} of {results.length} recipes
-            </span>
+            <span>Showing {showingFrom}–{showingTo} of {results.length} recipes</span>
           ) : (
             <span>No recipes matched your search yet.</span>
           )}
@@ -112,23 +137,11 @@ export default function Search() {
 
         {hasResults && totalPages > 1 && (
           <div className="pagination">
-            <button
-              type="button"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
-            >
+            <button type="button" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
               Previous
             </button>
-            <span>
-              Page {page} of {totalPages}
-            </span>
-            <button
-              type="button"
-              onClick={() =>
-                setPage((p) => Math.min(totalPages, p + 1))
-              }
-              disabled={page === totalPages}
-            >
+            <span>Page {page} of {totalPages}</span>
+            <button type="button" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
               Next
             </button>
           </div>
