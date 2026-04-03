@@ -14,8 +14,7 @@ export default function Search() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
-
-  const PAGE_SIZE = 6;
+  const [pageSize, setPageSize] = useState(10);
 
   useEffect(() => {
     let ignore = false;
@@ -53,11 +52,11 @@ export default function Search() {
   }
 
   const hasResults = results.length > 0;
-  const totalPages = hasResults ? Math.ceil(results.length / PAGE_SIZE) : 1;
-  const startIndex = (page - 1) * PAGE_SIZE;
-  const pageItems = results.slice(startIndex, startIndex + PAGE_SIZE);
+  const totalPages = hasResults ? Math.ceil(results.length / pageSize) : 1;
+  const startIndex = (page - 1) * pageSize;
+  const pageItems = results.slice(startIndex, startIndex + pageSize);
   const showingFrom = hasResults ? startIndex + 1 : 0;
-  const showingTo = hasResults ? Math.min(results.length, startIndex + PAGE_SIZE) : 0;
+  const showingTo = hasResults ? Math.min(results.length, startIndex + pageSize) : 0;
 
   return (
     <main>
@@ -93,14 +92,30 @@ export default function Search() {
 
         <TagDropdown value={tag} onChange={setTag} tags={TAGS} />
 
-        <div className="search-meta">
-          {loading ? (
-            <span>Loading results…</span>
-          ) : hasResults ? (
-            <span>Showing {showingFrom}–{showingTo} of {results.length} recipes</span>
-          ) : (
-            <span>No recipes matched your search yet.</span>
-          )}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="search-meta" style={{ margin: 0 }}>
+            {loading ? (
+              <span>Loading results…</span>
+            ) : hasResults ? (
+              <span>Showing {showingFrom}–{showingTo} of {results.length} recipes</span>
+            ) : (
+              <span>No recipes matched your search yet.</span>
+            )}
+          </div>
+          <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
+            <span style={{ fontSize: "0.85rem", color: "#6b7280" }}>Show:</span>
+            {[10, 20].map((n) => (
+              <button
+                key={n}
+                type="button"
+                className={`pill-btn ${pageSize === n ? "primary" : ""}`}
+                style={{ padding: "0.3rem 0.75rem", fontSize: "0.85rem" }}
+                onClick={() => { setPageSize(n); setPage(1); }}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
         </div>
 
         {hasResults && (

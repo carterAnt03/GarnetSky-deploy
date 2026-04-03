@@ -1,7 +1,7 @@
 // src/pages/RecipeDetails.jsx
 
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
 import {
   getRecipe,
   getFavorites,
@@ -201,14 +201,23 @@ export default function RecipeDetails() {
                   : "Add to favorites"}
               </button>
               {user && recipe.authorId === user.id && (
-                <button
-                  className="primary"
-                  type="button"
-                  onClick={handleDelete}
-                  style={{ background: "#c0392b" }}
-                >
-                  Delete Recipe
-                </button>
+                <>
+                  <Link
+                    className="primary"
+                    to={`/recipe/${id}/edit`}
+                    style={{ padding: "0.6rem 1.2rem", borderRadius: "999px", textDecoration: "none", fontWeight: 600 }}
+                  >
+                    Edit Recipe
+                  </Link>
+                  <button
+                    className="primary"
+                    type="button"
+                    onClick={handleDelete}
+                    style={{ background: "#c0392b" }}
+                  >
+                    Delete Recipe
+                  </button>
+                </>
               )}
             </div>
             {deleteError && <p className="error-text">{deleteError}</p>}

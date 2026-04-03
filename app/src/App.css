@@ -234,11 +234,43 @@ button.icon {
   gap: 1.5rem;
 }
 
+.recipe-card-wrap {
+  position: relative;
+}
+
 .recipe-card {
   display: flex;
   flex-direction: column;
   text-decoration: none;
   color: inherit;
+}
+
+.star-btn {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d1d5db;
+  transition: color 0.15s, transform 0.15s;
+  line-height: 1;
+}
+
+.star-btn:hover {
+  color: #f97316;
+  transform: scale(1.15);
+}
+
+.star-btn.starred {
+  color: #f97316;
 }
 
 .recipe-card img {
@@ -329,18 +361,37 @@ button.icon {
   align-items: flex-start;
 }
 
-.submit-wrap form {
+.recipe-form {
   display: flex;
   flex-direction: column;
-  gap: 0.9rem;
-  margin-top: 1rem;
+  gap: 1rem;
 }
 
-.submit-wrap textarea {
-  min-height: 150px;
-  padding: 0.7rem 0.9rem;
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-field label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.form-field textarea {
+  min-height: 130px;
+  resize: none;
 }
 
 /* Fake lines on the “instructions” card */

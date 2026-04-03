@@ -26,7 +26,10 @@ export default function Contact() {
 
             <ul className="bullets">
               <li>
-                <strong>Email:</strong> support@garnetsky-recipes.example
+                <strong>Email:</strong>{" "}
+                <a href="mailto:support@garnetsky-recipes.example">
+                  support@garnetsky-recipes.example
+                </a>
               </li>
               <li>
                 <strong>Office hours:</strong> Mon–Fri, 9am–5pm (EST)

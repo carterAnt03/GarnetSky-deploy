@@ -226,12 +226,43 @@ async function getMyRecipes(req, res) {
     }
   }
 
+async function updateRecipe(req, res) {
+  const { slug } = req.params;
+  const userId = req.user.id;
+  try {
+    const check = await pool.query('SELECT author_id FROM recipes WHERE slug = $1', [slug]);
+    if (check.rows.length === 0) {
+      return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Recipe not found' } });
+    }
+    if (check.rows[0].author_id !== userId) {
+      return res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Not your recipe' } });
+    }
+
+    const { title, desc, time, tags, imageUrl, ingredientsText, instructionsText } = req.body;
+
+    const tagArray = tags ? tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+    const ingredients = ingredientsText ? ingredientsText.split('\n').map(s => s.trim()).filter(Boolean) : [];
+    const instructions = instructionsText ? instructionsText.split('\n').map(s => s.trim()).filter(Boolean) : [];
+
+    await pool.query(
+      `UPDATE recipes SET title=$1, description=$2, time=$3, tags=$4, thumb=$5, ingredients=$6, instructions=$7 WHERE slug=$8`,
+      [title, desc, time || null, tagArray, imageUrl || null, ingredients, instructions, slug]
+    );
+
+    res.json({ updated: true });
+  } catch (err) {
+    console.error('updateRecipe error:', err);
+    res.status(500).json({ error: { code: 'SERVER_ERROR', message: 'Failed to update recipe' } });
+  }
+}
+
 module.exports = {
   listRecipes,
   getRecipeBySlug,
   createRecipe,
   getMyRecipes,
-  deleteRecipe
+  deleteRecipe,
+  updateRecipe
 };
 
 

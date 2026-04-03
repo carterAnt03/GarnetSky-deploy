@@ -60,7 +60,22 @@ export async function removeFavorite(recipeId) {
   }
 
 export async function deleteRecipe(recipeId) {
-    await api(`/api/v1/recipes/${recipeId}`, { method: 'DELETE' });                                
-  }
+  await api(`/api/v1/recipes/${recipeId}`, { method: 'DELETE' });
+}
+
+export async function updateRecipe(id, payload) {
+  await api(`/api/v1/recipes/${encodeURIComponent(id)}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      title: payload.title,
+      desc: payload.desc,
+      time: payload.time,
+      tags: payload.tags,
+      imageUrl: payload.imageUrl,
+      ingredientsText: payload.ingredientsText,
+      instructionsText: payload.instructionsText,
+    }),
+  });
+}
 
   

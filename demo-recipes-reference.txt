@@ -1,0 +1,116 @@
+GARNETSKY DEMO RECIPES - RE-ENTRY REFERENCE
+============================================
+Use this to re-submit the hardcoded demo recipes through the app so they exist in the DB.
+NOTE: Local image files can't be used as URLs. Find a hosted replacement (e.g. Unsplash) for those marked [NEEDS URL].
+
+------------------------------------------------------------
+RECIPE 1: Spaghetti
+------------------------------------------------------------
+Title:       Spaghetti
+Time:        30 Minutes
+Tags:        Vegan, 4 ingredients, Easy
+Description: A simple, comforting pasta with tomato sauce.
+Image URL:   [NEEDS URL - was local file spaghetti.jpg]
+             Suggestion: https://images.unsplash.com/photo-1598866594230-a7c12756260f?w=800
+
+Ingredients (one per line):
+8 oz spaghetti
+2 cups tomato sauce
+2 cloves garlic, minced
+2 tbsp olive oil
+
+Instructions (one per line):
+Cook spaghetti according to package directions; drain.
+Sauté garlic in olive oil, then add tomato sauce and simmer for 5–10 minutes.
+Toss pasta with sauce and serve.
+
+------------------------------------------------------------
+RECIPE 2: Spaghetti Carbonara
+------------------------------------------------------------
+Title:       Spaghetti Carbonara
+Time:        25 Minutes
+Tags:        Pork, Creamy, Italian
+Description: Classic carbonara with eggs, Parmesan, and crispy pancetta.
+Image URL:   [NEEDS URL - was local file carbonara.jpg]
+             Suggestion: https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800
+
+Ingredients (one per line):
+8 oz spaghetti
+2 eggs
+1/2 cup grated Parmesan
+4 oz pancetta or bacon
+Salt & pepper
+
+Instructions (one per line):
+Cook pasta until al dente, reserving 1/2 cup of the pasta water.
+Crisp pancetta in a pan and set aside.
+Whisk eggs and Parmesan together in a bowl.
+Toss hot pasta with pancetta, then quickly stir in egg mixture, using pasta water as needed to create a silky sauce.
+
+------------------------------------------------------------
+RECIPE 3: Weeknight Chickpea Curry
+------------------------------------------------------------
+Title:       Weeknight Chickpea Curry
+Time:        35 Minutes
+Tags:        Vegetarian, Gluten-free, Spicy
+Description: A cozy coconut chickpea curry for busy nights.
+Image URL:   [NEEDS URL - was local file curry.jpg]
+             Suggestion: https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800
+
+Ingredients (one per line):
+1 tbsp oil
+1 onion, diced
+2 tbsp curry paste
+1 can chickpeas, drained
+1 can coconut milk
+Salt to taste
+
+Instructions (one per line):
+Sauté onion in oil until soft.
+Stir in curry paste and cook for 1 minute.
+Add chickpeas and coconut milk, then simmer for 15 minutes.
+Serve over rice with your favorite toppings.
+
+------------------------------------------------------------
+RECIPE 4: Simple Caesar Salad
+------------------------------------------------------------
+Title:       Simple Caesar Salad
+Time:        15 Minutes
+Tags:        Salad, Quick
+Description: Crisp romaine with creamy Caesar dressing.
+Image URL:   https://images.unsplash.com/photo-1551248429-40975aa4de74?q=80&w=800&auto=format&fit=crop
+
+Ingredients (one per line):
+Romaine lettuce
+Croutons
+Parmesan cheese
+Caesar dressing
+
+Instructions (one per line):
+Wash and chop romaine.
+Toss with Caesar dressing until lightly coated.
+Top with croutons and shaved Parmesan, then serve immediately.
+
+------------------------------------------------------------
+RECIPE 5: Chocolate Chip Cookies
+------------------------------------------------------------
+Title:       Chocolate Chip Cookies
+Time:        30 Minutes
+Tags:        Dessert
+Description: Soft and chewy cookies loaded with warm chocolate chips.
+Image URL:   [NEEDS URL - was local file cookie.jpg]
+             Suggestion: https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=800
+
+Ingredients (one per line):
+2 1/4 cups flour
+1 cup butter, softened
+3/4 cup sugar
+3/4 cup brown sugar
+1 egg + 1 egg yolk
+1 1/2 cups chocolate chips
+
+Instructions (one per line):
+Cream butter and sugars together until light and fluffy.
+Beat in egg and egg yolk, then mix in dry ingredients until just combined.
+Fold in chocolate chips.
+Scoop onto baking sheet and bake at 350°F for 10–12 minutes.

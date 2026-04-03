@@ -5,6 +5,7 @@ const {
   createRecipe,
   getMyRecipes,
   deleteRecipe,
+  updateRecipe,
 } = require('../controllers/recipesController');
 
 const { requireAuth } = require('../middleware/auth');
@@ -24,6 +25,7 @@ router.get('/mine', requireAuth, getMyRecipes);
 // Get recipe by slug
 router.get('/:slug', getRecipeBySlug);
 
+router.put('/:slug', requireAuth, updateRecipe);
 router.delete('/:slug', requireAuth, deleteRecipe);
 
 module.exports = router;
