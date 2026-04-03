@@ -30,6 +30,19 @@ git --version
 
 ---
 
+## 🗄️ Database Backup
+
+To export all database data (users, recipes, favorites) to a local JSON file:
+
+```bash
+cd server
+npm run backup
+```
+
+Backup files are saved to `server/backups/backup-<timestamp>.json`. This folder is gitignored so backups stay local and credentials are never committed.
+
+---
+
 ## Testing
 
 All tests are located in the `tests/` directory:
