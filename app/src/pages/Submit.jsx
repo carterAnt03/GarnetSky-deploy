@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { createRecipe } from "../services/recipeService";
+import { TAGS } from "../data/tags";
 
 export default function SubmitPage() {
   const { user } = useAuth();
@@ -10,7 +11,13 @@ export default function SubmitPage() {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [time, setTime] = useState("");
-  const [tags, setTags] = useState("");
+  const [tags, setTags] = useState([]);
+
+  function toggleTag(tag) {
+    setTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  }
   const [imageUrl, setImageUrl] = useState("");
   const [ingredientsText, setIngredientsText] = useState("");
   const [instructionsText, setInstructionsText] = useState("");
@@ -55,7 +62,7 @@ export default function SubmitPage() {
         title: title.trim(),
         desc: desc.trim(),
         time: time.trim() || null,
-        tags: tags,
+        tags: tags.join(","),
         imageUrl: imageUrl.trim() || null,
         ingredientsText,
         instructionsText,
@@ -144,15 +151,23 @@ export default function SubmitPage() {
                 />
               </label>
 
-              <label>
-                Tags (comma-separated)
-                <input
-                  type="text"
-                  placeholder="pasta, italian, easy"
-                  value={tags}
-                  onChange={(e) => setTags(e.target.value)}
-                />
-              </label>
+              <div>
+                <label style={{ display: "block", marginBottom: "0.5rem" }}>
+                  Tags {tags.length > 0 && <span className="muted" style={{ fontSize: "0.85rem" }}>({tags.length} selected)</span>}
+                </label>
+                <div className="tag-picker">
+                  {TAGS.map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      className={`pill-btn ${tags.includes(t) ? "primary" : ""}`}
+                      onClick={() => toggleTag(t)}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              </div>
 
                <label>                                                                                          
                 Image URL

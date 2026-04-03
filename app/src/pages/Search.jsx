@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import RecipeCard from "../components/RecipeCard";
 import { searchRecipes } from "../services/recipeService";
 import { useAuth } from "../context/AuthContext";
+import { TAGS } from "../data/tags";
 
 export default function Search() {
   const { user } = useAuth();
@@ -10,7 +11,6 @@ export default function Search() {
   const [activeQ, setActiveQ] = useState("");
   const [tag, setTag] = useState("");
   const [results, setResults] = useState([]);
-  const [allTags, setAllTags] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
 
@@ -23,12 +23,7 @@ export default function Search() {
 
     searchRecipes({ query: activeQ, tag })
       .then((list) => {
-        if (!ignore) {
-          setResults(list);
-          if (!activeQ && !tag) {
-            setAllTags(Array.from(new Set(list.flatMap((r) => r.tags || []))).sort());
-          }
-        }
+        if (!ignore) setResults(list);
       })
       .catch((err) => {
         console.error(err);
@@ -95,27 +90,23 @@ export default function Search() {
           </button>
         </div>
 
-        {allTags.length > 0 && (
-          <div className="tag-filters">
-            <button
-              type="button"
-              className={`pill-btn ${tag === "" ? "primary" : ""}`}
-              onClick={() => setTag("")}
-            >
-              All
-            </button>
-            {allTags.map((t) => (
-              <button
-                key={t}
-                type="button"
-                className={`pill-btn ${tag === t ? "primary" : ""}`}
-                onClick={() => setTag(tag === t ? "" : t)}
-              >
-                {t}
-              </button>
+        <div className="tag-dropdown-wrap">
+          <select
+            className="tag-select"
+            value={tag}
+            onChange={(e) => setTag(e.target.value)}
+          >
+            <option value="">All Tags</option>
+            {TAGS.map((t) => (
+              <option key={t} value={t}>{t}</option>
             ))}
-          </div>
-        )}
+          </select>
+          {tag && (
+            <button type="button" className="pill-btn" onClick={() => setTag("")}>
+              Clear Filter
+            </button>
+          )}
+        </div>
 
         <div className="search-meta">
           {loading ? (
