@@ -41,9 +41,9 @@
           <div className="card cream">
             <h2>Meet the Team</h2>
             <ul className="bullets">
+              <li>Carter Antley — <a href="mailto:ctantley@email.sc.edu">ctantley@email.sc.edu</a></li>
               <li>Aidan McClelland — ajm54@email.sc.edu</li>
               <li>Jonah Mosquera — mosquerj@email.sc.edu</li>
-              <li>Carter Antley — ctantley@email.sc.edu</li>
               <li>Jason Pope — jjpope@email.sc.edu</li>
               <li>Ayden Mathews — aydenwm@email.sc.edu</li>
             </ul>

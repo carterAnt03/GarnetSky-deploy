@@ -72,17 +72,13 @@ npm run test:ui        # Run UI component tests only
 npm run test:backend   # Run backend validation tests only
 npm run test:ui:watch  # Run UI tests in watch mode
 ```
-Testing
-Test again
-Text for Carter
-Beta text
 
 ---
 
 ## Authors
 
+- Carter Antley - [ctantley@email.sc.edu](mailto:ctantley@email.sc.edu)
 - Aidan McClelland - ajm54@email.sc.edu
 - Jonah Mosquera - mosquerj@email.sc.edu
-- Carter Antley - ctantley@email.sc.edu
-- Jason Pope - jjpope@email.sc.edu 
-- Ayden Mathews - aydenwm@email.sc.edu 
+- Jason Pope - jjpope@email.sc.edu
+- Ayden Mathews - aydenwm@email.sc.edu
