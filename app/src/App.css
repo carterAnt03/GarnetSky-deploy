@@ -45,6 +45,8 @@ main {
   border-radius: 16px;
   padding: 1.5rem 1.75rem;
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* === NAVBAR === */
@@ -282,6 +284,20 @@ button.icon {
 
 .card-body {
   margin-top: 0.75rem;
+  overflow: hidden;
+}
+
+.card-body h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-body p {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Auth (Login/Signup) */
