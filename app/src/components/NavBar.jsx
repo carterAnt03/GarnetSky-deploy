@@ -38,8 +38,6 @@ export default function NavBar() {
           <Tab to="/">Home</Tab>
           <Tab to="/search">All Recipes</Tab>
           <Tab to="/favorites">Favorites</Tab>
-          <Tab to="/about">About</Tab>
-          <Tab to="/contact">Contact</Tab>
 
           {user ? (
             <>
