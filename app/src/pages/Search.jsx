@@ -4,6 +4,7 @@ import RecipeCard from "../components/RecipeCard";
 import { searchRecipes } from "../services/recipeService";
 import { useAuth } from "../context/AuthContext";
 import { TAGS } from "../data/tags";
+import TagDropdown from "../components/TagDropdown";
 
 export default function Search() {
   const { user } = useAuth();
@@ -90,23 +91,7 @@ export default function Search() {
           </button>
         </div>
 
-        <div className="tag-dropdown-wrap">
-          <select
-            className="tag-select"
-            value={tag}
-            onChange={(e) => setTag(e.target.value)}
-          >
-            <option value="">All Tags</option>
-            {TAGS.map((t) => (
-              <option key={t} value={t}>{t}</option>
-            ))}
-          </select>
-          {tag && (
-            <button type="button" className="pill-btn" onClick={() => setTag("")}>
-              Clear Filter
-            </button>
-          )}
-        </div>
+        <TagDropdown value={tag} onChange={setTag} tags={TAGS} />
 
         <div className="search-meta">
           {loading ? (
