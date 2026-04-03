@@ -106,7 +106,7 @@ export default function SubmitPage() {
   return (
     <main>
       <section className="section">
-        <h1 className="page-title">Submit New Recipe</h1>
+        <h1 className="page-title">New Recipe</h1>
 
         <div className="submit-wrap">
           {/* Left: form */}

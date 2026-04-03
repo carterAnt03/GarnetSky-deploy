@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
 import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
 
 // Pages
 import Home from "./pages/Home";
@@ -13,7 +14,6 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import RecipeDetails from "./pages/RecipeDetails";
-import RecipeOfTheDay from "./pages/RecipeOfTheDay";
 import MyRecipes from "./pages/MyRecipes";
 import Admin from "./pages/Admin";
 
@@ -41,7 +41,6 @@ export default function App() {
             <Route path="/search" element={<Search />} />
             <Route path="/submit" element={<Submit />} />
             <Route path="/favorites" element={<Favorites />} />
-            <Route path="/recipe-of-the-day" element={<RecipeOfTheDay />} />
             <Route path="/recipe/:id" element={<RecipeDetails />} />
             <Route path="/my-recipes" element={<MyRecipes />} />
             <Route path="/about" element={<About />} />
@@ -58,6 +57,7 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
+        <Footer />
       </div>
     </BrowserRouter>
   );

@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import RecipeCard from "../components/RecipeCard";
 import { searchRecipes } from "../services/recipeService";
+import { useAuth } from "../context/AuthContext";
 
 export default function Search() {
+  const { user } = useAuth();
   const [q, setQ] = useState("");
   const [tag, setTag] = useState("");
   const [results, setResults] = useState([]);
@@ -51,11 +54,10 @@ export default function Search() {
   return (
     <main>
       <section className="section">
-        <h1 className="page-title">Search Recipes</h1>
-        <p className="muted">
-          Search across our demo recipe collection by keyword and tag, then page
-          through the results.
-        </p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+          <h1 className="page-title" style={{ margin: 0 }}>All Recipes</h1>
+          {user && <Link className="pill-btn" to="/submit">+ New Recipe</Link>}
+        </div>
 
         <div className="search-bar">
           <input

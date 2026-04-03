@@ -1,58 +1,56 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { searchRecipes } from "../services/recipeService";
+import { getDailyRecipe } from "../utils/dailyRecipe";
 
 export default function Home() {
-  const [featured, setFeatured] = useState(null);
+  const [recipe, setRecipe] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    async function loadFeatured() {
+    async function loadDaily() {
       try {
         const list = await searchRecipes({});
         if (!cancelled && list.length > 0) {
-          setFeatured(list[0]);
+          setRecipe(getDailyRecipe(list));
         }
       } catch (err) {
-        console.error("Failed to load featured recipe", err);
+        console.error("Failed to load recipe of the day", err);
       }
     }
 
-    loadFeatured();
-
-    return () => {
-      cancelled = true;
-    };
+    loadDaily();
+    return () => { cancelled = true; };
   }, []);
 
   return (
     <main>
       <section className="section">
-        <h1 className="page-title">Welcome to GarnetSky Recipes</h1>
-        <p className="muted">
-          A simple recipe app where you can sign up, log in, and browse a small
-          collection of example dishes.
-        </p>
+        <h1 className="page-title">Recipe of the Day</h1>
+        <p className="muted">A new recipe every day — check back tomorrow for another.</p>
 
-        {featured ? (
+        {recipe ? (
           <div className="featured card">
-            <img src={featured.thumb} alt={featured.title} />
+            <img src={recipe.thumb} alt={recipe.title} />
             <div>
-              <h2>{featured.title}</h2>
+              <h2>{recipe.title}</h2>
               <div className="muted">
-                Time: {featured.time} &nbsp;•&nbsp; {featured.tags.join(" | ")}
+                Time: {recipe.time} &nbsp;•&nbsp; {recipe.tags.join(" | ")}
               </div>
-              <p>{featured.desc}</p>
+              <p>{recipe.desc}</p>
               <div className="actions">
+                <Link className="pill-btn" to={`/recipe/${recipe.id}`}>
+                  View Full Recipe
+                </Link>
                 <Link className="pill-btn" to="/search">
-                  Browse all recipes
+                  Browse All Recipes
                 </Link>
               </div>
             </div>
           </div>
         ) : (
-          <p className="muted">Loading featured recipe…</p>
+          <p className="muted">Loading today's recipe…</p>
         )}
       </section>
     </main>
