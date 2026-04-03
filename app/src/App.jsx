@@ -35,7 +35,7 @@ export default function App() {
       <div className="app-shell">
         <NavBar />
 
-        <main>
+        <div className="content-area">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<Search />} />
@@ -56,7 +56,7 @@ export default function App() {
 
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </main>
+        </div>
         <Footer />
       </div>
     </BrowserRouter>
