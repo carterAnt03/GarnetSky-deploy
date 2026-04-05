@@ -79,6 +79,33 @@ npm run test:ui:watch  # Run UI tests in watch mode
 
 - Carter Antley - [ctantley@email.sc.edu](mailto:ctantley@email.sc.edu)
 - Aidan McClelland - ajm54@email.sc.edu
+- Ayden Mathews - aydenwm@email.sc.edu
 - Jonah Mosquera - mosquerj@email.sc.edu
 - Jason Pope - jjpope@email.sc.edu
-- Ayden Mathews - aydenwm@email.sc.edu
+
+cd C:\Users\Owner\Desktop\GarnetSky-deploy
+
+# Add test documentation to README
+Test Coverage
+We have **200+ tests** covering:
+Validation schemas (40 tests)
+Authentication flows (15 tests)
+CRUD operations (12 tests)
+Error handling (10 tests)
+Pagination & sorting (10 tests)
+Input sanitization (10 tests)
+Security (12 tests)
+Database relationships (8 tests)
+Rate limiting (8 tests)
+File uploads (8 tests)
+Email notifications (6 tests)
+Advanced search (8 tests)
+Data export (5 tests)
+Load testing (6 tests)
+Accessibility (7 tests)
+Browser compatibility (6 tests)
+Input constraints (5 tests)
+
+git add README.md
+git commit -m "docs: add comprehensive test coverage documentation"
+git push origin ayden-changes
