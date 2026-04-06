@@ -81,21 +81,6 @@ Helpful root-level helper script:
 ./run-tests.sh
 ```
 
-## Sample recipe seeding
-
-A sample seed set of 20 recipes is included for development or shared deploy environments.
-
-From `server/`:
-
-```bash
-npm run seed:sample -- --author-email your-email@example.com
-```
-
-What it does:
-
-- looks up the author by email
-- inserts 20 sample recipes if they do not already exist for that author
-- keeps existing matching recipes instead of duplicating them
 
 ## Authors
 
