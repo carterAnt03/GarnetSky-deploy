@@ -1,16 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#1a6b9a"/>
-      <stop offset="55%" style="stop-color:#7C1022"/>
-      <stop offset="100%" style="stop-color:#4a0814"/>
+    <linearGradient id="cloud" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#9e1a2e"/>
+      <stop offset="100%" style="stop-color:#5a0e1a"/>
     </linearGradient>
   </defs>
-  <rect width="32" height="32" rx="6" fill="url(#bg)"/>
-  <!-- Left tine -->
-  <rect x="9.5" y="3" width="2.5" height="10" rx="1.25" fill="white"/>
-  <!-- Center tine + handle -->
-  <rect x="14.75" y="3" width="2.5" height="26" rx="1.25" fill="white"/>
-  <!-- Right tine -->
-  <rect x="20" y="3" width="2.5" height="10" rx="1.25" fill="white"/>
+  <!-- Cloud shape -->
+  <circle cx="10" cy="17" r="5.5" fill="url(#cloud)"/>
+  <circle cx="16" cy="14" r="7" fill="url(#cloud)"/>
+  <circle cx="22" cy="17" r="5" fill="url(#cloud)"/>
+  <rect x="4.5" y="17" width="23" height="7" rx="1" fill="url(#cloud)"/>
+  <!-- Fork: left tine -->
+  <rect x="11" y="10" width="2" height="6" rx="1" fill="white"/>
+  <!-- Fork: center tine + handle -->
+  <rect x="15" y="10" width="2" height="12" rx="1" fill="white"/>
+  <!-- Fork: right tine -->
+  <rect x="19" y="10" width="2" height="6" rx="1" fill="white"/>
 </svg>
