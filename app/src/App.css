@@ -470,30 +470,6 @@ button.icon {
   background: #fef2f2;
 }
 
-/* Responsive tweaks */
-
-@media (max-width: 768px) {
-  main {
-    padding-inline: 1rem;
-  }
-
-  .featured,
-  .details-header,
-  .submit-wrap {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .search-filters {
-  margin-top: 0.75rem;
-  font-size: 0.9rem;
-}
-
-.search-filters select {
-  padding: 0.35rem 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-}
-
 /* Styled tag dropdown */
 
 .tag-dropdown-wrap {
@@ -600,8 +576,6 @@ button.icon {
 }
 
 .search-meta {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
   font-size: 0.9rem;
   color: #6b7280;
 }
@@ -628,6 +602,30 @@ button.icon {
   color: #f97316;
 }
 
+/* Responsive tweaks */
+
+@media (max-width: 768px) {
+  main {
+    padding-inline: 1rem;
+  }
+
+  .featured,
+  .details-header,
+  .submit-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .search-filters {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .search-filters select {
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+  }
 }
 /* Cuisine theme classes */
 /* Applied to recipe cards and detail pages based on detected cuisine tag.                                                                       
