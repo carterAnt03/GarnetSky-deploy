@@ -198,12 +198,43 @@ export default function SubmitPage() {
                     onChange={(e) => setImageUrl(e.target.value)}
                   />
                 ) : (
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    disabled={uploading}
-                  />
+                  <label style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.4rem",
+                    padding: "1.5rem",
+                    border: "2px dashed #d1d5db",
+                    borderRadius: "12px",
+                    cursor: uploading ? "default" : "pointer",
+                    background: "#fff",
+                    color: "#6b7280",
+                    fontSize: "0.9rem",
+                    transition: "border-color 0.15s",
+                  }}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files[0];
+                    if (file) handleFileChange({ target: { files: [file] } });
+                  }}
+                  >
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.5">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <span>{uploading ? "Uploading…" : "Click or drag an image here"}</span>
+                    <span style={{ fontSize: "0.8rem" }}>PNG, JPG, WEBP up to 5 MB</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      disabled={uploading}
+                      style={{ display: "none" }}
+                    />
+                  </label>
                 )}
                 {uploading && <p className="muted" style={{ margin: "0.25rem 0 0" }}>Uploading…</p>}
                 {(imageMode === "url" ? imageUrl : imagePreview) && (
