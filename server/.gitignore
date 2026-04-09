@@ -12,8 +12,9 @@ npm-debug.log*
 # OS files
 .DS_Store
 
-# Uploads (if storing locally)
-uploads/
+# Uploads — keep the folder, ignore uploaded files
+uploads/*
+!uploads/.gitkeep
 
 # Database backups
 backups/

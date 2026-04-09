@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { createRecipe } from "../services/recipeService";
+import { createRecipe, uploadImage } from "../services/recipeService";
 import { TAGS } from "../data/tags";
 
 export default function SubmitPage() {
@@ -13,6 +13,9 @@ export default function SubmitPage() {
   const [time, setTime] = useState("");
   const [tags, setTags] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
+  const [imageMode, setImageMode] = useState("url"); // "url" | "upload"
+  const [imagePreview, setImagePreview] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [ingredientsText, setIngredientsText] = useState("");
   const [instructionsText, setInstructionsText] = useState("");
   const [error, setError] = useState("");
@@ -29,8 +32,25 @@ export default function SubmitPage() {
 
   function resetForm() {
     setTitle(""); setDesc(""); setTime(""); setTags([]);
-    setImageUrl(""); setIngredientsText(""); setInstructionsText("");
+    setImageUrl(""); setImageMode("url"); setImagePreview(""); setUploading(false);
+    setIngredientsText(""); setInstructionsText("");
     setError(""); setStatus("idle"); setCreatedRecipe(null);
+  }
+
+  async function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImagePreview(URL.createObjectURL(file));
+    setUploading(true);
+    setError("");
+    try {
+      const url = await uploadImage(file);
+      setImageUrl(url);
+    } catch (err) {
+      setError(err.message || "Image upload failed.");
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function handleSubmit(e) {
@@ -151,16 +171,44 @@ export default function SubmitPage() {
               </div>
 
               <div className="form-field">
-                <label>Image URL</label>
-                <input
-                  type="url"
-                  placeholder="https://example.com/my-recipe.jpg"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                />
-                {imageUrl && (
+                <label>Image</label>
+                <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
+                  <button
+                    type="button"
+                    className={`pill-btn ${imageMode === "url" ? "primary" : ""}`}
+                    style={{ padding: "0.3rem 0.9rem", fontSize: "0.85rem" }}
+                    onClick={() => { setImageMode("url"); setImagePreview(""); }}
+                  >
+                    Link
+                  </button>
+                  <button
+                    type="button"
+                    className={`pill-btn ${imageMode === "upload" ? "primary" : ""}`}
+                    style={{ padding: "0.3rem 0.9rem", fontSize: "0.85rem" }}
+                    onClick={() => { setImageMode("upload"); setImageUrl(""); }}
+                  >
+                    Upload from device
+                  </button>
+                </div>
+                {imageMode === "url" ? (
+                  <input
+                    type="url"
+                    placeholder="https://example.com/my-recipe.jpg"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                  />
+                ) : (
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    disabled={uploading}
+                  />
+                )}
+                {uploading && <p className="muted" style={{ margin: "0.25rem 0 0" }}>Uploading…</p>}
+                {(imageMode === "url" ? imageUrl : imagePreview) && (
                   <img
-                    src={imageUrl}
+                    src={imageMode === "url" ? imageUrl : imagePreview}
                     alt="Preview"
                     onError={(e) => (e.target.style.display = "none")}
                     onLoad={(e) => (e.target.style.display = "block")}
