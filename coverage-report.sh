@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+cd tests
+npm run test:backend -- --coverage
+echo "Coverage report generated in tests/coverage/."

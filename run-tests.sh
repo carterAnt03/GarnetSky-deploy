@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+cd tests
+npm test
+echo "All tests completed."
