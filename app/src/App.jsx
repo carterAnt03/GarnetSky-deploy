@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
+import { FavoritesProvider } from "./context/FavoritesContext";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 
@@ -33,6 +34,7 @@ function NotFound() {
 export default function App() {
   return (
     <BrowserRouter>
+      <FavoritesProvider>
       <div className="app-shell">
         <NavBar />
 
@@ -61,6 +63,7 @@ export default function App() {
         </div>
         <Footer />
       </div>
+      </FavoritesProvider>
     </BrowserRouter>
   );
 }

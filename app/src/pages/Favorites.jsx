@@ -85,7 +85,7 @@ export default function Favorites() {
             {filtered.length > 0 ? (
               <div className="grid">
                 {filtered.map((r) => (
-                  <RecipeCard key={r.id} r={r} isFavorite={true} />
+                  <RecipeCard key={r.id} r={r} />
                 ))}
               </div>
             ) : (

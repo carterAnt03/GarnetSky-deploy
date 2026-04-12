@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { getCuisineClass } from "../theme/cuisineThemes";
-import { addFavorite, removeFavorite } from "../services/recipeService";
 import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
 
-export default function RecipeCard({ r, isFavorite: initialFav = false }) {
+export default function RecipeCard({ r }) {
   const { user } = useAuth();
+  const { favIds, toggleFavorite } = useFavorites();
   const cuisineClass = getCuisineClass(r.tags);
-  const [fav, setFav] = useState(initialFav);
+  const fav = favIds.has(r.id);
   const [busy, setBusy] = useState(false);
 
   async function handleStar(e) {
@@ -16,13 +17,7 @@ export default function RecipeCard({ r, isFavorite: initialFav = false }) {
     if (!user) return;
     setBusy(true);
     try {
-      if (fav) {
-        await removeFavorite(r.id);
-        setFav(false);
-      } else {
-        await addFavorite(r.id);
-        setFav(true);
-      }
+      await toggleFavorite(r.id);
     } catch {
       // silent fail
     } finally {
