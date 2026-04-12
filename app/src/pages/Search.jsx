@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import RecipeCard from "../components/RecipeCard";
-import { searchRecipes } from "../services/recipeService";
+import { searchRecipes, getFavorites } from "../services/recipeService";
 import { useAuth } from "../context/AuthContext";
 import { TAGS } from "../data/tags";
 import TagDropdown from "../components/TagDropdown";
@@ -15,6 +15,14 @@ export default function Search() {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [favIds, setFavIds] = useState(new Set());
+
+  useEffect(() => {
+    if (!user) { setFavIds(new Set()); return; }
+    getFavorites()
+      .then((list) => setFavIds(new Set(list.map((r) => r.id))))
+      .catch(() => {});
+  }, [user]);
 
   useEffect(() => {
     let ignore = false;
@@ -121,7 +129,7 @@ export default function Search() {
         {hasResults && (
           <div className="grid">
             {pageItems.map((r) => (
-              <RecipeCard key={r.id} r={r} />
+              <RecipeCard key={r.id} r={r} isFavorite={favIds.has(r.id)} />
             ))}
           </div>
         )}
