@@ -290,10 +290,10 @@ export default function SubmitPage() {
           <div className="card instructions rose">
             <h2>Tips</h2>
             <ul className="bullets" style={{ color: "#6b7280" }}>
+              <li>Drag and drop an image or upload from your device. You can also switch to a URL link.</li>
               <li>Use the tag picker to help others find your recipe.</li>
-              <li>Add one ingredient per line for a clean list.</li>
-              <li>Write each instruction as a single step.</li>
-              <li>Paste an image URL for a photo preview.</li>
+              <li>Use the text editor to format ingredients and instructions — bullet or numbered lists work great.</li>
+              <li>Write each instruction as a single step for clarity.</li>
             </ul>
           </div>
         </div>
