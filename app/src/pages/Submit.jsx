@@ -188,19 +188,19 @@ export default function SubmitPage() {
                 <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
                   <button
                     type="button"
-                    className={`pill-btn ${imageMode === "url" ? "primary" : ""}`}
-                    style={{ padding: "0.3rem 0.9rem", fontSize: "0.85rem" }}
-                    onClick={() => { setImageMode("url"); setImagePreview(""); }}
-                  >
-                    Link
-                  </button>
-                  <button
-                    type="button"
                     className={`pill-btn ${imageMode === "upload" ? "primary" : ""}`}
                     style={{ padding: "0.3rem 0.9rem", fontSize: "0.85rem" }}
                     onClick={() => { setImageMode("upload"); setImageUrl(""); }}
                   >
                     Upload from device
+                  </button>
+                  <button
+                    type="button"
+                    className={`pill-btn ${imageMode === "url" ? "primary" : ""}`}
+                    style={{ padding: "0.3rem 0.9rem", fontSize: "0.85rem" }}
+                    onClick={() => { setImageMode("url"); setImagePreview(""); }}
+                  >
+                    Link
                   </button>
                 </div>
                 {imageMode === "url" ? (
