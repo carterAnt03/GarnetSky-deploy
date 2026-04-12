@@ -61,7 +61,7 @@ export default function Search() {
   return (
     <main>
       <section className="section">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <h1 className="page-title" style={{ margin: 0 }}>All Recipes</h1>
           {user && <Link className="pill-btn primary" to="/submit">+ New Recipe</Link>}
         </div>
