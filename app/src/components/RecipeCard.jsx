@@ -4,6 +4,8 @@ import { getCuisineClass } from "../theme/cuisineThemes";
 import { useAuth } from "../context/AuthContext";
 import { useFavorites } from "../context/FavoritesContext";
 
+const PLACEHOLDER = "/recipe-images/placeholder.png";
+
 export default function RecipeCard({ r }) {
   const { user } = useAuth();
   const { favIds, toggleFavorite } = useFavorites();
@@ -28,7 +30,11 @@ export default function RecipeCard({ r }) {
   return (
     <div className="recipe-card-wrap">
       <Link to={`/recipe/${r.id}`} className={`recipe-card card ${cuisineClass}`}>
-        <img src={r.thumb} alt={r.title} />
+        <img
+          src={r.thumb || PLACEHOLDER}
+          alt={r.title}
+          onError={(e) => { e.target.src = PLACEHOLDER; }}
+        />
         <div className="card-body">
           <h3>{r.title}</h3>
           <p className="muted">{r.desc}</p>

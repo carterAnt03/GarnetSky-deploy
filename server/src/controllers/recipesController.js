@@ -1,5 +1,4 @@
 const pool = require('../config/database');
-const { get } = require('../routes/favoritesRoutes');
 
 async function listRecipes(req, res) {
   try {

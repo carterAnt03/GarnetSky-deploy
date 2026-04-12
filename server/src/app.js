@@ -70,10 +70,6 @@ function createApp() {
     res.json({ status: 'ok' });
   });
 
-  // Add this so the frontend's GET /api/v1/status works
-  app.get("/api/v1/status", (req, res) => {
-    res.json({ status: "ok" });
-  });
 
   // Serve uploaded images
   app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
