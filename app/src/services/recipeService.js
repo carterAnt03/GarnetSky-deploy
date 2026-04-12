@@ -18,8 +18,7 @@ export async function uploadImage(file) {
     throw new Error(data?.error?.message || "Image upload failed");
   }
   const data = await res.json();
-  const url = data.url;
-  return url.startsWith("/") ? `${API_BASE}${url}` : url;
+  return data.url;
 }
 
 // ----------------- Recipes API -----------------
