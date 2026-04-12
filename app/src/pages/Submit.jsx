@@ -3,6 +3,19 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { createRecipe, uploadImage } from "../services/recipeService";
 import { TAGS } from "../data/tags";
+import RichEditor from "../components/RichEditor";
+
+function htmlToLines(html) {
+  return html
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<\/li>/gi, "\n")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .join("\n");
+}
 
 export default function SubmitPage() {
   const { user } = useAuth();
@@ -69,8 +82,8 @@ export default function SubmitPage() {
         time: time.trim() || null,
         tags: tags.join(","),
         imageUrl: imageUrl.trim() || null,
-        ingredientsText,
-        instructionsText,
+        ingredientsText: htmlToLines(ingredientsText),
+        instructionsText: htmlToLines(instructionsText),
       });
 
       if (!recipe || !recipe.id) {
@@ -249,30 +262,20 @@ export default function SubmitPage() {
               </div>
 
               <div className="form-field">
-                <label>
-                  Ingredients <span className="muted" style={{ fontSize: "0.85rem" }}>(one per line)</span>
-                </label>
-                <textarea
-                  rows={6}
-                  placeholder={"200 g spaghetti\n1 cup tomato sauce\n2 cloves garlic"}
+                <label>Ingredients</label>
+                <RichEditor
                   value={ingredientsText}
-                  maxLength={2000}
-                  style={{ resize: "none" }}
-                  onChange={(e) => setIngredientsText(e.target.value)}
+                  onChange={setIngredientsText}
+                  placeholder="200 g spaghetti&#10;1 cup tomato sauce&#10;2 cloves garlic"
                 />
               </div>
 
               <div className="form-field">
-                <label>
-                  Instructions <span className="muted" style={{ fontSize: "0.85rem" }}>(one step per line)</span>
-                </label>
-                <textarea
-                  rows={6}
-                  placeholder={"Cook pasta until al dente.\nSauté garlic in olive oil.\nAdd sauce and simmer."}
+                <label>Instructions</label>
+                <RichEditor
                   value={instructionsText}
-                  maxLength={3000}
-                  style={{ resize: "none" }}
-                  onChange={(e) => setInstructionsText(e.target.value)}
+                  onChange={setInstructionsText}
+                  placeholder="Cook pasta until al dente.&#10;Sauté garlic in olive oil.&#10;Add sauce and simmer."
                 />
               </div>
 

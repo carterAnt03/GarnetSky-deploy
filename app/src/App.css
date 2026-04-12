@@ -668,6 +668,90 @@ Each theme sets an accent color used for borders, highlights, and tags. */
     margin-right: 0.25rem;
   }
 
+/* Rich text editor */
+
+.rich-editor {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.rich-editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+  flex-wrap: wrap;
+}
+
+.rich-editor-btn {
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 0.85rem;
+  color: #374151;
+  cursor: pointer;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.rich-editor-btn:hover {
+  background: #e5e7eb;
+}
+
+.rich-editor-btn.active {
+  background: #f97316;
+  color: #fff;
+  border-color: #f97316;
+}
+
+.rich-editor-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.rich-editor-divider {
+  width: 1px;
+  height: 1.2rem;
+  background: #d1d5db;
+  margin: 0 0.15rem;
+}
+
+.rich-editor-content {
+  padding: 0.65rem 0.9rem;
+  min-height: 130px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.rich-editor-content .tiptap {
+  outline: none;
+  min-height: 110px;
+}
+
+.rich-editor-content .tiptap p,
+.rich-editor-content .tiptap ul,
+.rich-editor-content .tiptap ol {
+  margin: 0 0 0.4rem;
+}
+
+.rich-editor-content .tiptap ul,
+.rich-editor-content .tiptap ol {
+  padding-left: 1.4rem;
+}
+
+.rich-editor-content .tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
 /* Contact page */
 
 .contact-form-inline {
