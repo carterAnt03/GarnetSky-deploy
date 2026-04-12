@@ -668,6 +668,40 @@ Each theme sets an accent color used for borders, highlights, and tags. */
     margin-right: 0.25rem;
   }
 
+/* Confirm modal */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem 2rem 1.5rem;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.modal-message {
+  font-size: 1rem;
+  color: #111827;
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
 /* Rich text editor */
 
 .rich-editor {
