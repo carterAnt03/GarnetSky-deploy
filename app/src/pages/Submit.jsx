@@ -26,7 +26,7 @@ export default function SubmitPage() {
   const [time, setTime] = useState("");
   const [tags, setTags] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
-  const [imageMode, setImageMode] = useState("url"); // "url" | "upload"
+  const [imageMode, setImageMode] = useState("upload"); // "url" | "upload"
   const [imagePreview, setImagePreview] = useState("");
   const [uploading, setUploading] = useState(false);
   const [ingredientsText, setIngredientsText] = useState("");
