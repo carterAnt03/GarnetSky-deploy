@@ -1,7 +1,7 @@
 // src/pages/RecipeDetails.jsx
 
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   getRecipe,
   getFavorites,
