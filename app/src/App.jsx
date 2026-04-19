@@ -18,6 +18,8 @@ import RecipeDetails from "./pages/RecipeDetails";
 import MyRecipes from "./pages/MyRecipes";
 import Admin from "./pages/Admin";
 import EditRecipe from "./pages/EditRecipe";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 // Optional: keep your API test page accessible at /__test
 import TestApi from "./pages/TestApi";
@@ -52,6 +54,8 @@ export default function App() {
 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route path="/admin" element={<Admin />} />
 

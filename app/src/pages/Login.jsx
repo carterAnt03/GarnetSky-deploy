@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 export default function Login() {
   const { logIn } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const successMessage = location.state?.message;
 
   const [form, setForm] = useState({ identifier: "", password: "" });
   const [fieldErrors, setFieldErrors] = useState({});
@@ -38,6 +40,11 @@ export default function Login() {
       <section className="section">
         <h1 className="page-title">Log In</h1>
         <div className="card auth-card">
+          {successMessage && (
+            <p style={{ color: "#16a34a", marginBottom: "1rem", textAlign: "center" }}>
+              {successMessage}
+            </p>
+          )}
           <form className="auth-form" onSubmit={handleSubmit}>
             <label>
               Email or Username
@@ -72,6 +79,10 @@ export default function Login() {
               Log In
             </button>
           </form>
+
+          <p className="muted" style={{ marginTop: "1rem", textAlign: "center" }}>
+            <Link to="/forgot-password">Forgot your password?</Link>
+          </p>
         </div>
       </section>
     </main>
