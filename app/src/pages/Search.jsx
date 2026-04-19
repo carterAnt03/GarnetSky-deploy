@@ -9,45 +9,29 @@ import TagDropdown from "../components/TagDropdown";
 export default function Search() {
   const { user } = useAuth();
   const [q, setQ] = useState("");
-  const [activeQ, setActiveQ] = useState("");
   const [tag, setTag] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
+  // Auto-search: fires 400ms after the user stops typing, or immediately on tag change
   useEffect(() => {
     let ignore = false;
-    setLoading(true);
-    setPage(1);
+    const timer = setTimeout(() => {
+      setLoading(true);
+      setPage(1);
+      searchRecipes({ query: q, tag })
+        .then((list) => { if (!ignore) setResults(list); })
+        .catch((err) => { console.error(err); if (!ignore) setResults([]); })
+        .finally(() => { if (!ignore) setLoading(false); });
+    }, q ? 400 : 0);
 
-    searchRecipes({ query: activeQ, tag })
-      .then((list) => {
-        if (!ignore) setResults(list);
-      })
-      .catch((err) => {
-        console.error(err);
-        if (!ignore) setResults([]);
-      })
-      .finally(() => {
-        if (!ignore) setLoading(false);
-      });
-
-    return () => { ignore = true; };
-  }, [activeQ, tag]);
-
-  function handleSearch() {
-    setActiveQ(q);
-    setPage(1);
-  }
-
-  function handleKeyDown(e) {
-    if (e.key === "Enter") handleSearch();
-  }
+    return () => { ignore = true; clearTimeout(timer); };
+  }, [q, tag]);
 
   function handleClear() {
     setQ("");
-    setActiveQ("");
     setPage(1);
   }
 
@@ -79,13 +63,9 @@ export default function Search() {
               placeholder="Search by name, description, or tag…"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              onKeyDown={handleKeyDown}
             />
           </div>
-          <button type="button" className="pill-btn primary" onClick={handleSearch}>
-            Search
-          </button>
-          <button type="button" className="pill-btn" onClick={handleClear} disabled={!q && !activeQ}>
+          <button type="button" className="pill-btn" onClick={handleClear} disabled={!q}>
             Clear
           </button>
         </div>
