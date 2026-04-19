@@ -651,9 +651,39 @@ Each theme sets an accent color used for borders, highlights, and tags. */
   /* Thai — deep purple with gold secondary */
   .theme-thai { --cuisine-accent: #4b0082; --cuisine-secondary: #f4b942; }
 
-  /* Apply the accent color to the card's left border when a cuisine is detected */
+  /* Swap left border for a top border — more prominent on vertical cards */
   .recipe-card[class*="theme-"] {
-    border-left: 4px solid var(--cuisine-accent);
+    border-top: 5px solid var(--cuisine-accent);
+  }
+
+  /* Tag pills inside recipe cards */
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.6rem;
+  }
+
+  .card-tag {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  /* On cuisine-themed cards, use the accent color for the tag pills */
+  .recipe-card[class*="theme-"] .card-tag {
+    background: var(--cuisine-accent);
+    color: #fff;
+  }
+
+  /* Colored top accent bar on the recipe detail section */
+  .section.details[class*="theme-"] {
+    border-top: 6px solid var(--cuisine-accent);
+    padding-top: 1.5rem;
   }
 
   /* Style cuisine tags on the detail page using the accent color */

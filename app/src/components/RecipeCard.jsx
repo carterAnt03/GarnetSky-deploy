@@ -32,6 +32,13 @@ export default function RecipeCard({ r }) {
         <div className="card-body">
           <h3>{r.title}</h3>
           <p className="muted">{r.desc}</p>
+          {r.tags && r.tags.length > 0 && (
+            <div className="card-tags">
+              {r.tags.slice(0, 3).map((tag) => (
+                <span key={tag} className="card-tag">{tag}</span>
+              ))}
+            </div>
+          )}
         </div>
       </Link>
       {user && (
