@@ -246,6 +246,13 @@ button.icon {
   text-decoration: none;
   color: inherit;
   flex: 1;
+  border: 1px solid #e5e7eb;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.recipe-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
 }
 
 .star-btn {
