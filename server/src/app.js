@@ -8,12 +8,14 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const helmet = require("helmet");
+const path = require("path");
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
 const recipeRoutes = require("./routes/recipeRoutes");
 const favoritesRoutes = require("./routes/favoritesRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
 
 function createApp() {
   const app = express();
@@ -68,16 +70,16 @@ function createApp() {
     res.json({ status: 'ok' });
   });
 
-  // Add this so the frontend's GET /api/v1/status works
-  app.get("/api/v1/status", (req, res) => {
-    res.json({ status: "ok" });
-  });
+
+  // Serve uploaded images
+  app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
   // Routes
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/recipes", recipeRoutes);
   app.use("/api/v1/favorites", favoritesRoutes);
   app.use("/api/v1/admin", adminRoutes);
+  app.use("/api/v1/upload", uploadRoutes);
 
   // Generic error handler
   // eslint-disable-next-line no-unused-vars

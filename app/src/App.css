@@ -29,7 +29,6 @@ main {
   flex-direction: column;
   gap: 1.5rem;
   margin-top: 1.5rem;
-  overflow-x: hidden;
   word-break: break-word;
   overflow-wrap: break-word;
 }
@@ -177,7 +176,6 @@ button.icon {
 .search-bar {
   display: flex;
   gap: 0.75rem;
-  margin-top: 0.5rem;
   align-items: center;
 }
 
@@ -199,7 +197,7 @@ button.icon {
 
 .search-input-wrap input {
   width: 100%;
-  padding: 0.6rem 0.9rem 0.6rem 2.25rem;
+  padding: 0.6rem 0.9rem 0.6rem 2.5rem;
   border-radius: 999px;
   border: 1px solid #e5e7eb;
 }
@@ -210,13 +208,6 @@ button.icon {
   gap: 0.5rem;
 }
 
-.search-bar input {
-  flex: 1;
-  padding: 0.6rem 0.9rem;
-  border-radius: 999px;
-  border: 1px solid #e5e7eb;
-  font-size: 0.95rem;
-}
 
 .pill-btn {
   border-radius: 999px;
@@ -225,6 +216,7 @@ button.icon {
   font-weight: 600;
   background: #111827;
   color: #f9fafb;
+  text-decoration: none;
 }
 
 .h2 {
@@ -237,8 +229,9 @@ button.icon {
 .grid,
 .recipe-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 1.5rem;
+  align-content: start;
 }
 
 .recipe-card-wrap {
@@ -302,6 +295,7 @@ button.icon {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  line-clamp: 2;
   overflow: hidden;
 }
 
@@ -344,6 +338,9 @@ button.icon {
   border: none;
   padding: 0.7rem 1.4rem;
   font-weight: 600;
+}
+
+.auth-form .primary {
   margin-top: 0.5rem;
 }
 
@@ -466,30 +463,6 @@ button.icon {
   background: #fef2f2;
 }
 
-/* Responsive tweaks */
-
-@media (max-width: 768px) {
-  main {
-    padding-inline: 1rem;
-  }
-
-  .featured,
-  .details-header,
-  .submit-wrap {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .search-filters {
-  margin-top: 0.75rem;
-  font-size: 0.9rem;
-}
-
-.search-filters select {
-  padding: 0.35rem 0.5rem;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-  background: #ffffff;
-}
-
 /* Styled tag dropdown */
 
 .tag-dropdown-wrap {
@@ -596,14 +569,11 @@ button.icon {
 }
 
 .search-meta {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
   font-size: 0.9rem;
   color: #6b7280;
 }
 
 .pagination {
-  margin-top: 1.25rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -612,12 +582,43 @@ button.icon {
 }
 
 .pagination button {
-  padding: 0.35rem 0.9rem;
+  padding: 0.4rem 1.1rem;
   border-radius: 999px;
   border: 1px solid #d1d5db;
   background: #ffffff;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
+.pagination button:not(:disabled):hover {
+  border-color: #f97316;
+  color: #f97316;
+}
+
+/* Responsive tweaks */
+
+@media (max-width: 768px) {
+  main {
+    padding-inline: 1rem;
+  }
+
+  .featured,
+  .details-header,
+  .submit-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .search-filters {
+    margin-top: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  .search-filters select {
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+  }
 }
 /* Cuisine theme classes */
 /* Applied to recipe cards and detail pages based on detected cuisine tag.                                                                       
@@ -650,9 +651,39 @@ Each theme sets an accent color used for borders, highlights, and tags. */
   /* Thai — deep purple with gold secondary */
   .theme-thai { --cuisine-accent: #4b0082; --cuisine-secondary: #f4b942; }
 
-  /* Apply the accent color to the card's left border when a cuisine is detected */
+  /* Swap left border for a top border — more prominent on vertical cards */
   .recipe-card[class*="theme-"] {
-    border-left: 4px solid var(--cuisine-accent);
+    border-top: 5px solid var(--cuisine-accent);
+  }
+
+  /* Tag pills inside recipe cards */
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.6rem;
+  }
+
+  .card-tag {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  /* On cuisine-themed cards, use the accent color for the tag pills */
+  .recipe-card[class*="theme-"] .card-tag {
+    background: var(--cuisine-accent);
+    color: #fff;
+  }
+
+  /* Colored top accent bar on the recipe detail section */
+  .section.details[class*="theme-"] {
+    border-top: 6px solid var(--cuisine-accent);
+    padding-top: 1.5rem;
   }
 
   /* Style cuisine tags on the detail page using the accent color */
@@ -666,6 +697,124 @@ Each theme sets an accent color used for borders, highlights, and tags. */
     color: #fff;
     margin-right: 0.25rem;
   }
+
+/* Confirm modal */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem 2rem 1.5rem;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.modal-message {
+  font-size: 1rem;
+  color: #111827;
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* Rich text editor */
+
+.rich-editor {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.rich-editor-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+  flex-wrap: wrap;
+}
+
+.rich-editor-btn {
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 0.85rem;
+  color: #374151;
+  cursor: pointer;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.rich-editor-btn:hover {
+  background: #e5e7eb;
+}
+
+.rich-editor-btn.active {
+  background: #f97316;
+  color: #fff;
+  border-color: #f97316;
+}
+
+.rich-editor-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.rich-editor-divider {
+  width: 1px;
+  height: 1.2rem;
+  background: #d1d5db;
+  margin: 0 0.15rem;
+}
+
+.rich-editor-content {
+  padding: 0.65rem 0.9rem;
+  min-height: 130px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.rich-editor-content .tiptap {
+  outline: none;
+  min-height: 110px;
+}
+
+.rich-editor-content .tiptap p,
+.rich-editor-content .tiptap ul,
+.rich-editor-content .tiptap ol {
+  margin: 0 0 0.4rem;
+}
+
+.rich-editor-content .tiptap ul,
+.rich-editor-content .tiptap ol {
+  padding-left: 1.4rem;
+}
+
+.rich-editor-content .tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
 
 /* Contact page */
 

@@ -4,9 +4,11 @@
    * Handles user signup, login, logout, and profile retrieval                                                                               
    */                                                                                                                                        
                                                                                                                                              
-  const bcrypt = require("bcrypt");                                                                                                          
-  const pool = require("../config/database");                     
+  const crypto = require("crypto");
+  const bcrypt = require("bcrypt");
+  const pool = require("../config/database");
   const { generateToken } = require("../utils/jwt");
+  const { sendPasswordResetEmail } = require("../utils/email");
                                                                                                                                              
   function getAuthCookieOptions() {
     const isProd = process.env.NODE_ENV === "production";                                                                                    
@@ -200,9 +202,109 @@
     }                                                                                                                                        
   }                                                               
 
+  /**
+   * Request a password reset email
+   * POST /api/v1/auth/forgot-password
+   */
+  async function forgotPassword(req, res) {
+    try {
+      const { email } = req.body;
+
+      const result = await pool.query(
+        "SELECT id FROM users WHERE email = $1",
+        [email]
+      );
+
+      // Always respond 200 so we don't reveal whether an email exists
+      if (result.rows.length === 0) {
+        return res.status(200).json({ message: "If that email exists, a reset link has been sent." });
+      }
+
+      const userId = result.rows[0].id;
+      const token = crypto.randomBytes(32).toString("hex");
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+      await pool.query(
+        `INSERT INTO password_reset_tokens (user_id, token, expires_at)
+         VALUES ($1, $2, $3)`,
+        [userId, token, expiresAt]
+      );
+
+      const frontendUrl = (process.env.FRONTEND_URL || "http://localhost:5173").replace(/\/$/, "");
+      const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
+
+      await sendPasswordResetEmail(email, resetUrl);
+
+      res.status(200).json({ message: "If that email exists, a reset link has been sent." });
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      res.status(500).json({
+        error: { code: "SERVER_ERROR", message: "An error occurred." },
+      });
+    }
+  }
+
+  /**
+   * Reset password using a valid token
+   * POST /api/v1/auth/reset-password
+   */
+  async function resetPassword(req, res) {
+    try {
+      const { token, password } = req.body;
+
+      const result = await pool.query(
+        `SELECT id, user_id, expires_at, used_at
+         FROM password_reset_tokens
+         WHERE token = $1`,
+        [token]
+      );
+
+      if (result.rows.length === 0) {
+        return res.status(400).json({
+          error: { code: "INVALID_TOKEN", message: "Invalid or expired reset link." },
+        });
+      }
+
+      const row = result.rows[0];
+
+      if (row.used_at) {
+        return res.status(400).json({
+          error: { code: "TOKEN_USED", message: "This reset link has already been used." },
+        });
+      }
+
+      if (new Date() > new Date(row.expires_at)) {
+        return res.status(400).json({
+          error: { code: "TOKEN_EXPIRED", message: "This reset link has expired. Please request a new one." },
+        });
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      await pool.query("UPDATE users SET password_hash = $1 WHERE id = $2", [
+        passwordHash,
+        row.user_id,
+      ]);
+
+      await pool.query(
+        "UPDATE password_reset_tokens SET used_at = NOW() WHERE id = $1",
+        [row.id]
+      );
+
+      res.status(200).json({ message: "Password updated successfully." });
+    } catch (error) {
+      console.error("Reset password error:", error);
+      res.status(500).json({
+        error: { code: "SERVER_ERROR", message: "An error occurred." },
+      });
+    }
+  }
+
   module.exports = {
     signup,
     login,
     logout,
     getCurrentUser,
+    forgotPassword,
+    resetPassword,
   };

@@ -1,8 +1,21 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { createRecipe } from "../services/recipeService";
+import { createRecipe, uploadImage } from "../services/recipeService";
 import { TAGS } from "../data/tags";
+import RichEditor from "../components/RichEditor";
+
+function htmlToLines(html) {
+  return html
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<\/li>/gi, "\n")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .join("\n");
+}
 
 export default function SubmitPage() {
   const { user } = useAuth();
@@ -13,6 +26,9 @@ export default function SubmitPage() {
   const [time, setTime] = useState("");
   const [tags, setTags] = useState([]);
   const [imageUrl, setImageUrl] = useState("");
+  const [imageMode, setImageMode] = useState("upload"); // "url" | "upload"
+  const [imagePreview, setImagePreview] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [ingredientsText, setIngredientsText] = useState("");
   const [instructionsText, setInstructionsText] = useState("");
   const [error, setError] = useState("");
@@ -29,8 +45,25 @@ export default function SubmitPage() {
 
   function resetForm() {
     setTitle(""); setDesc(""); setTime(""); setTags([]);
-    setImageUrl(""); setIngredientsText(""); setInstructionsText("");
+    setImageUrl(""); setImageMode("url"); setImagePreview(""); setUploading(false);
+    setIngredientsText(""); setInstructionsText("");
     setError(""); setStatus("idle"); setCreatedRecipe(null);
+  }
+
+  async function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setImagePreview(URL.createObjectURL(file));
+    setUploading(true);
+    setError("");
+    try {
+      const url = await uploadImage(file);
+      setImageUrl(url);
+    } catch (err) {
+      setError(err.message || "Image upload failed.");
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function handleSubmit(e) {
@@ -49,8 +82,8 @@ export default function SubmitPage() {
         time: time.trim() || null,
         tags: tags.join(","),
         imageUrl: imageUrl.trim() || null,
-        ingredientsText,
-        instructionsText,
+        ingredientsText: htmlToLines(ingredientsText),
+        instructionsText: htmlToLines(instructionsText),
       });
 
       if (!recipe || !recipe.id) {
@@ -151,16 +184,75 @@ export default function SubmitPage() {
               </div>
 
               <div className="form-field">
-                <label>Image URL</label>
-                <input
-                  type="url"
-                  placeholder="https://example.com/my-recipe.jpg"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                />
-                {imageUrl && (
+                <label>Image</label>
+                <div style={{ display: "flex", gap: "0.5rem", marginBottom: "0.5rem" }}>
+                  <button
+                    type="button"
+                    className={`pill-btn ${imageMode === "upload" ? "primary" : ""}`}
+                    style={{ padding: "0.3rem 0.9rem", fontSize: "0.85rem" }}
+                    onClick={() => { setImageMode("upload"); setImageUrl(""); }}
+                  >
+                    Upload from device
+                  </button>
+                  <button
+                    type="button"
+                    className={`pill-btn ${imageMode === "url" ? "primary" : ""}`}
+                    style={{ padding: "0.3rem 0.9rem", fontSize: "0.85rem" }}
+                    onClick={() => { setImageMode("url"); setImagePreview(""); }}
+                  >
+                    Link
+                  </button>
+                </div>
+                {imageMode === "url" ? (
+                  <input
+                    type="url"
+                    placeholder="https://example.com/my-recipe.jpg"
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
+                  />
+                ) : (
+                  <label style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.4rem",
+                    padding: "1.5rem",
+                    border: "2px dashed #d1d5db",
+                    borderRadius: "12px",
+                    cursor: uploading ? "default" : "pointer",
+                    background: "#fff",
+                    color: "#6b7280",
+                    fontSize: "0.9rem",
+                    transition: "border-color 0.15s",
+                  }}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files[0];
+                    if (file) handleFileChange({ target: { files: [file] } });
+                  }}
+                  >
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="1.5">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <span>{uploading ? "Uploading…" : "Click or drag an image here"}</span>
+                    <span style={{ fontSize: "0.8rem" }}>PNG, JPG, WEBP up to 5 MB</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      disabled={uploading}
+                      style={{ display: "none" }}
+                    />
+                  </label>
+                )}
+                {uploading && <p className="muted" style={{ margin: "0.25rem 0 0" }}>Uploading…</p>}
+                {(imageMode === "url" ? imageUrl : imagePreview) && (
                   <img
-                    src={imageUrl}
+                    src={imageMode === "url" ? imageUrl : imagePreview}
                     alt="Preview"
                     onError={(e) => (e.target.style.display = "none")}
                     onLoad={(e) => (e.target.style.display = "block")}
@@ -170,30 +262,20 @@ export default function SubmitPage() {
               </div>
 
               <div className="form-field">
-                <label>
-                  Ingredients <span className="muted" style={{ fontSize: "0.85rem" }}>(one per line)</span>
-                </label>
-                <textarea
-                  rows={6}
-                  placeholder={"200 g spaghetti\n1 cup tomato sauce\n2 cloves garlic"}
+                <label>Ingredients</label>
+                <RichEditor
                   value={ingredientsText}
-                  maxLength={2000}
-                  style={{ resize: "none" }}
-                  onChange={(e) => setIngredientsText(e.target.value)}
+                  onChange={setIngredientsText}
+                  placeholder="200 g spaghetti&#10;1 cup tomato sauce&#10;2 cloves garlic"
                 />
               </div>
 
               <div className="form-field">
-                <label>
-                  Instructions <span className="muted" style={{ fontSize: "0.85rem" }}>(one step per line)</span>
-                </label>
-                <textarea
-                  rows={6}
-                  placeholder={"Cook pasta until al dente.\nSauté garlic in olive oil.\nAdd sauce and simmer."}
+                <label>Instructions</label>
+                <RichEditor
                   value={instructionsText}
-                  maxLength={3000}
-                  style={{ resize: "none" }}
-                  onChange={(e) => setInstructionsText(e.target.value)}
+                  onChange={setInstructionsText}
+                  placeholder="Cook pasta until al dente.&#10;Sauté garlic in olive oil.&#10;Add sauce and simmer."
                 />
               </div>
 
@@ -208,10 +290,10 @@ export default function SubmitPage() {
           <div className="card instructions rose">
             <h2>Tips</h2>
             <ul className="bullets" style={{ color: "#6b7280" }}>
+              <li>Drag and drop an image or upload from your device. You can also switch to a URL link.</li>
               <li>Use the tag picker to help others find your recipe.</li>
-              <li>Add one ingredient per line for a clean list.</li>
-              <li>Write each instruction as a single step.</li>
-              <li>Paste an image URL for a photo preview.</li>
+              <li>Use the text editor to format ingredients and instructions — bullet or numbered lists work great.</li>
+              <li>Write each instruction as a single step for clarity.</li>
             </ul>
           </div>
         </div>

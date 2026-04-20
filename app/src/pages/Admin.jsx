@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { api } from "../api";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function AdminPage() {
   const { user } = useAuth();
@@ -11,6 +12,7 @@ export default function AdminPage() {
   const [error, setError] = useState("");
   const [userQ, setUserQ] = useState("");
   const [recipeQ, setRecipeQ] = useState("");
+  const [confirm, setConfirm] = useState(null); // { message, onConfirm }
 
   useEffect(() => {
     if (!user || user.role !== "admin") {
@@ -33,24 +35,34 @@ export default function AdminPage() {
     }
   }
 
-  async function handleDeleteUser(userId) {
-    if (!window.confirm("Delete this user?")) return;
-    try {
-      await api(`/api/v1/admin/users/${userId}`, { method: "DELETE" });
-      setUsers((prev) => prev.filter((u) => u.id !== userId));
-    } catch (err) {
-      setError("Failed to delete user.");
-    }
+  function handleDeleteUser(userId) {
+    setConfirm({
+      message: "Delete this user?",
+      onConfirm: async () => {
+        setConfirm(null);
+        try {
+          await api(`/api/v1/admin/users/${userId}`, { method: "DELETE" });
+          setUsers((prev) => prev.filter((u) => u.id !== userId));
+        } catch {
+          setError("Failed to delete user.");
+        }
+      },
+    });
   }
 
-  async function handleDeleteRecipe(slug) {
-    if (!window.confirm("Delete this recipe?")) return;
-    try {
-      await api(`/api/v1/admin/recipes/${slug}`, { method: "DELETE" });
-      setRecipes((prev) => prev.filter((r) => r.id !== slug));
-    } catch (err) {
-      setError("Failed to delete recipe.");
-    }
+  function handleDeleteRecipe(slug) {
+    setConfirm({
+      message: "Delete this recipe?",
+      onConfirm: async () => {
+        setConfirm(null);
+        try {
+          await api(`/api/v1/admin/recipes/${slug}`, { method: "DELETE" });
+          setRecipes((prev) => prev.filter((r) => r.id !== slug));
+        } catch {
+          setError("Failed to delete recipe.");
+        }
+      },
+    });
   }
 
   if (!user) return null;
@@ -73,6 +85,13 @@ export default function AdminPage() {
 
   return (
     <main>
+      {confirm && (
+        <ConfirmModal
+          message={confirm.message}
+          onConfirm={confirm.onConfirm}
+          onCancel={() => setConfirm(null)}
+        />
+      )}
       <section className="section">
         <h1 className="page-title">Admin Dashboard</h1>
         {error && <p className="error-text">{error}</p>}

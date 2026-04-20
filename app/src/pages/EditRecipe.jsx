@@ -3,6 +3,19 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getRecipe, updateRecipe } from "../services/recipeService";
 import { TAGS } from "../data/tags";
+import RichEditor from "../components/RichEditor";
+
+function htmlToLines(html) {
+  return html
+    .replace(/<\/p>/gi, "\n")
+    .replace(/<\/li>/gi, "\n")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .join("\n");
+}
 
 export default function EditRecipe() {
   const { id } = useParams();
@@ -33,8 +46,8 @@ export default function EditRecipe() {
         setTime(recipe.time || "");
         setTags(recipe.tags || []);
         setImageUrl(recipe.thumb || "");
-        setIngredientsText((recipe.ingredients || []).join("\n"));
-        setInstructionsText((recipe.instructions || []).join("\n"));
+        setIngredientsText((recipe.ingredients || []).map((i) => `<p>${i}</p>`).join(""));
+        setInstructionsText((recipe.instructions || []).map((i) => `<p>${i}</p>`).join(""));
       } catch (err) {
         setError("Failed to load recipe.");
       } finally {
@@ -65,8 +78,8 @@ export default function EditRecipe() {
         time: time.trim() || null,
         tags: tags.join(","),
         imageUrl: imageUrl.trim() || null,
-        ingredientsText,
-        instructionsText,
+        ingredientsText: htmlToLines(ingredientsText),
+        instructionsText: htmlToLines(instructionsText),
       });
       navigate(`/recipe/${id}`);
     } catch (err) {
@@ -139,13 +152,13 @@ export default function EditRecipe() {
               </div>
 
               <div className="form-field">
-                <label>Ingredients <span className="muted" style={{ fontSize: "0.85rem" }}>(one per line)</span></label>
-                <textarea rows={6} value={ingredientsText} maxLength={2000} style={{ resize: "none" }} onChange={(e) => setIngredientsText(e.target.value)} />
+                <label>Ingredients</label>
+                <RichEditor value={ingredientsText} onChange={setIngredientsText} />
               </div>
 
               <div className="form-field">
-                <label>Instructions <span className="muted" style={{ fontSize: "0.85rem" }}>(one step per line)</span></label>
-                <textarea rows={6} value={instructionsText} maxLength={3000} style={{ resize: "none" }} onChange={(e) => setInstructionsText(e.target.value)} />
+                <label>Instructions</label>
+                <RichEditor value={instructionsText} onChange={setInstructionsText} />
               </div>
 
               {error && <p className="error-text">{error}</p>}

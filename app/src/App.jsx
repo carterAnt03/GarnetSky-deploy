@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 
+import { FavoritesProvider } from "./context/FavoritesContext";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 
@@ -17,6 +18,8 @@ import RecipeDetails from "./pages/RecipeDetails";
 import MyRecipes from "./pages/MyRecipes";
 import Admin from "./pages/Admin";
 import EditRecipe from "./pages/EditRecipe";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 // Optional: keep your API test page accessible at /__test
 import TestApi from "./pages/TestApi";
@@ -33,6 +36,7 @@ function NotFound() {
 export default function App() {
   return (
     <BrowserRouter>
+      <FavoritesProvider>
       <div className="app-shell">
         <NavBar />
 
@@ -50,6 +54,8 @@ export default function App() {
 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route path="/admin" element={<Admin />} />
 
@@ -61,6 +67,7 @@ export default function App() {
         </div>
         <Footer />
       </div>
+      </FavoritesProvider>
     </BrowserRouter>
   );
 }

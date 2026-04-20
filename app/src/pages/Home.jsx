@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { searchRecipes } from "../services/recipeService";
 import { getDailyRecipe } from "../utils/dailyRecipe";
 
+const PLACEHOLDER = "/recipe-images/placeholder.png";
+
 export default function Home() {
   const [recipe, setRecipe] = useState(null);
 
@@ -32,7 +34,11 @@ export default function Home() {
 
         {recipe ? (
           <div className="featured card">
-            <img src={recipe.thumb} alt={recipe.title} />
+            <img
+              src={recipe.thumb || PLACEHOLDER}
+              alt={recipe.title}
+              onError={(e) => { e.target.src = PLACEHOLDER; }}
+            />
             <div>
               <h2>{recipe.title}</h2>
               <div className="muted">

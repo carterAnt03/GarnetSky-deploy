@@ -2,6 +2,25 @@
 
 import { api } from "../api";
 
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ?? "";
+
+export async function uploadImage(file) {
+  const formData = new FormData();
+  formData.append("image", file);
+  const res = await fetch(`${API_BASE}/api/v1/upload`, {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data?.error?.message || "Image upload failed");
+  }
+  const data = await res.json();
+  return data.url;
+}
+
 // ----------------- Recipes API -----------------
 
 export async function searchRecipes({ query = "", tag = "" } = {}) {

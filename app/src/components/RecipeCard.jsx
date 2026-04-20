@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { getCuisineClass } from "../theme/cuisineThemes";
-import { addFavorite, removeFavorite } from "../services/recipeService";
 import { useAuth } from "../context/AuthContext";
+import { useFavorites } from "../context/FavoritesContext";
 
-export default function RecipeCard({ r, isFavorite: initialFav = false }) {
+const PLACEHOLDER = "/recipe-images/placeholder.png";
+
+export default function RecipeCard({ r }) {
   const { user } = useAuth();
+  const { favIds, toggleFavorite } = useFavorites();
   const cuisineClass = getCuisineClass(r.tags);
-  const [fav, setFav] = useState(initialFav);
+  const fav = favIds.has(r.id);
   const [busy, setBusy] = useState(false);
 
   async function handleStar(e) {
@@ -16,13 +19,7 @@ export default function RecipeCard({ r, isFavorite: initialFav = false }) {
     if (!user) return;
     setBusy(true);
     try {
-      if (fav) {
-        await removeFavorite(r.id);
-        setFav(false);
-      } else {
-        await addFavorite(r.id);
-        setFav(true);
-      }
+      await toggleFavorite(r.id);
     } catch {
       // silent fail
     } finally {
@@ -33,10 +30,21 @@ export default function RecipeCard({ r, isFavorite: initialFav = false }) {
   return (
     <div className="recipe-card-wrap">
       <Link to={`/recipe/${r.id}`} className={`recipe-card card ${cuisineClass}`}>
-        <img src={r.thumb} alt={r.title} />
+        <img
+          src={r.thumb || PLACEHOLDER}
+          alt={r.title}
+          onError={(e) => { e.target.src = PLACEHOLDER; }}
+        />
         <div className="card-body">
           <h3>{r.title}</h3>
           <p className="muted">{r.desc}</p>
+          {r.tags && r.tags.length > 0 && (
+            <div className="card-tags">
+              {r.tags.slice(0, 3).map((tag) => (
+                <span key={tag} className="card-tag">{tag}</span>
+              ))}
+            </div>
+          )}
         </div>
       </Link>
       {user && (

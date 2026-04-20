@@ -1,7 +1,7 @@
 // src/pages/RecipeDetails.jsx
 
 import { useEffect, useState } from "react";
-import { useNavigate, useParams, Link, useLocation } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   getRecipe,
   getFavorites,
@@ -11,6 +11,7 @@ import {
 } from "../services/recipeService";
 import { useAuth } from "../context/AuthContext";
 import { getCuisineClass } from "../theme/cuisineThemes";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function RecipeDetails() {
   const { id } = useParams();
@@ -22,10 +23,11 @@ export default function RecipeDetails() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [favBusy, setFavBusy] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const navigate = useNavigate();
 
-  async function handleDelete() {
-    if (!window.confirm("Are you sure you want to delete this recipe?")) return;
+  async function confirmDelete() {
+    setShowDeleteConfirm(false);
     try {
       await deleteRecipe(id);
       navigate("/");
@@ -86,7 +88,7 @@ export default function RecipeDetails() {
 
   async function handleToggleFavorite() {
     if (!user) {
-      alert("Please log in to save recipes to your favorites.");
+      navigate("/login");
       return;
     }
 
@@ -157,6 +159,13 @@ export default function RecipeDetails() {
 
     return (
       <main>
+        {showDeleteConfirm && (
+          <ConfirmModal
+            message="Are you sure you want to delete this recipe?"
+            onConfirm={confirmDelete}
+            onCancel={() => setShowDeleteConfirm(false)}
+          />
+        )}
         <section className={`section details ${cuisineClass}`}>
         {/* Hero / summary */}
         <div className="details-header">
@@ -212,7 +221,7 @@ export default function RecipeDetails() {
                   <button
                     className="primary"
                     type="button"
-                    onClick={handleDelete}
+                    onClick={() => setShowDeleteConfirm(true)}
                     style={{ background: "#c0392b" }}
                   >
                     Delete Recipe

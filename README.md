@@ -1,36 +1,43 @@
 # GarnetSky ☁️
 
 This project is our starting point for the CSCE Capstone course.  
-It’s a simple React + Vite app used to practice GitHub workflows, collaboration, and source control milestones. Using Node + npm cmds. 
+It’s a React + Vite frontend with a Node/Express backend for the GarnetSky recipe app.
 
-Our team is using this repo to demonstrate:
-- proper Git commits with verified emails,
-- branching and pull requests,
-- merge commits,
-- resolving merge conflicts, and
-- building/running a working app.
+## External Requirements
 
----
+Install:
 
-## 🚀 External Requirements
-
-To run this app locally, install:
-
-- [Node.js LTS](https://nodejs.org/en/)  
-- Git  
-- VS Code 
-- use the commands "npm start, npm build, npm run" 
+- Node.js LTS
+- npm
+- Git
 
 Check installation:
+
 ```bash
 node -v
 npm -v
 git --version
 ```
 
----
+## Run locally
 
-## 🗄️ Database Backup
+Frontend:
+
+```bash
+cd app
+npm install
+npm run dev
+```
+
+Backend:
+
+```bash
+cd server
+npm install
+npm run dev
+```
+
+## Database Backup
 
 To export all database data (users, recipes, favorites) to a local JSON file:
 
@@ -39,44 +46,45 @@ cd server
 npm run backup
 ```
 
-Backup files are saved to `server/backups/backup-<timestamp>.json`. This folder is gitignored so backups stay local and credentials are never committed.
-
----
+Backup files are saved to `server/backups/backup-<timestamp>.json`.
 
 ## Testing
 
-All tests are located in the `tests/` directory:
-- **UI Tests**: `tests/ui/**/*.test.jsx`
-- **Backend Tests**: `tests/backend/**/*.test.js`
+All automated tests live in the `tests/` directory.
 
-### Running Tests
+- **UI / behavior tests:** `tests/ui/**/*.test.jsx`
+- **Backend / unit tests:** `tests/backend/**/*.test.js`
 
-1. Navigate to the tests directory:
+Install test dependencies once:
+
 ```bash
 cd tests
-```
-
-2. Install test dependencies:
-```bash
 npm install
 ```
 
-3. Run all tests:
+Run everything:
+
 ```bash
 npm test
 ```
 
-4. Run specific test suites:
+Run one category at a time:
+
 ```bash
-npm run test:ui        # Run UI component tests only
-npm run test:backend   # Run backend validation tests only
-npm run test:ui:watch  # Run UI tests in watch mode
+npm run test:backend
+npm run test:ui
 ```
 
----
+Helpful root-level helper script:
+
+```bash
+./run-tests.sh
+```
+
 
 ## Authors
 
+<<<<<<< HEAD
 - Carter Antley - [ctantley@email.sc.edu](mailto:ctantley@email.sc.edu)
 - Aidan McClelland - ajm54@email.sc.edu
 - Ayden Mathews - aydenwm@email.sc.edu
@@ -109,3 +117,10 @@ Input constraints (5 tests)
 git add README.md
 git commit -m "docs: add comprehensive test coverage documentation"
 git push origin ayden-changes
+=======
+- Carter Antley
+- Aidan McClelland
+- Ayden Mathews
+- Jonah Mosquera
+- Jason Pope
+>>>>>>> 58f3402b328c01664c8c88b8d385368d3ad663f5
