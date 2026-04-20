@@ -59,8 +59,8 @@ main {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: #0f172a;           /* dark navy */
-  color: #f9fafb;                /* light text */
+  background: #0f172a;
+  color: #f9fafb;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
@@ -95,7 +95,7 @@ main {
   border-radius: 999px;
   font-size: 0.9rem;
   text-decoration: none;
-  color: #e2e8f0;                /* readable light grey-blue */
+  color: #e2e8f0;
   border: 1px solid transparent;
   background: transparent;
   transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
@@ -109,7 +109,7 @@ main {
 /* Active tab (current page) */
 
 .pill.active {
-  background: #f97316;           /* orange */
+  background: #f97316;
   color: #111827;
   border-color: #f97316;
 }
@@ -236,6 +236,8 @@ button.icon {
 
 .recipe-card-wrap {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .recipe-card {
@@ -243,6 +245,7 @@ button.icon {
   flex-direction: column;
   text-decoration: none;
   color: inherit;
+  flex: 1;
 }
 
 .star-btn {
@@ -282,21 +285,26 @@ button.icon {
 
 .card-body {
   margin-top: 0.75rem;
-  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .card-body h3 {
+  margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .card-body p {
+  margin: 0.25rem 0 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   line-clamp: 2;
   overflow: hidden;
+  flex: 1;
 }
 
 /* Auth (Login/Signup) */
@@ -412,7 +420,7 @@ button.icon {
   resize: none;
 }
 
-/* Fake lines on the “instructions” card */
+/* Fake lines on the "instructions" card */
 
 .instructions .lines {
   display: grid;
@@ -620,83 +628,58 @@ button.icon {
     background: #ffffff;
   }
 }
+
 /* Cuisine theme classes */
-/* Applied to recipe cards and detail pages based on detected cuisine tag.                                                                       
-Each theme sets an accent color used for borders, highlights, and tags. */
-  
-     /* Italian — red and green inspired by the Italian flag */
-  .theme-italian { --cuisine-accent: #ce2b37; --cuisine-secondary: #009246; }
 
-  /* Mexican — warm green and red with a golden accent */
-  .theme-mexican { --cuisine-accent: #006847; --cuisine-secondary: #ce1126; }
+.theme-italian { --cuisine-accent: #ce2b37; --cuisine-secondary: #009246; }
+.theme-mexican { --cuisine-accent: #006847; --cuisine-secondary: #ce1126; }
+.theme-japanese { --cuisine-accent: #bc002d; --cuisine-secondary: #1a1a2e; }
+.theme-indian { --cuisine-accent: #ff9933; --cuisine-secondary: #138808; }
+.theme-french { --cuisine-accent: #002395; --cuisine-secondary: #c8a951; }
+.theme-mediterranean { --cuisine-accent: #0077b6; --cuisine-secondary: #e9c46a; }
+.theme-american { --cuisine-accent: #b22234; --cuisine-secondary: #3c3b6e; }
+.theme-chinese { --cuisine-accent: #de2910; --cuisine-secondary: #ffde00; }
+.theme-thai { --cuisine-accent: #4b0082; --cuisine-secondary: #f4b942; }
 
-  /* Japanese — deep red (torii gate) with a dark ink secondary */
-  .theme-japanese { --cuisine-accent: #bc002d; --cuisine-secondary: #1a1a2e; }
+/* Only show cuisine accent on detail pages, not on cards in the grid */
 
-  /* Indian — saffron orange with a deep green secondary */
-  .theme-indian { --cuisine-accent: #ff9933; --cuisine-secondary: #138808; }
+.section.details[class*="theme-"] {
+  border-top: 6px solid var(--cuisine-accent);
+  padding-top: 1.5rem;
+}
 
-  /* French — classic navy blue with gold */
-  .theme-french { --cuisine-accent: #002395; --cuisine-secondary: #c8a951; }
+/* Tag pills inside recipe cards */
 
-  /* Mediterranean — ocean blue with sandy secondary */
-  .theme-mediterranean { --cuisine-accent: #0077b6; --cuisine-secondary: #e9c46a; }
+.card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: auto;
+  padding-top: 0.6rem;
+}
 
-  /* American — bold red with navy secondary */
-  .theme-american { --cuisine-accent: #b22234; --cuisine-secondary: #3c3b6e; }
+.card-tag {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #374151;
+}
 
-  /* Chinese — festive red with gold secondary */
-  .theme-chinese { --cuisine-accent: #de2910; --cuisine-secondary: #ffde00; }
+/* Style cuisine tags on the detail page using the accent color */
 
-  /* Thai — deep purple with gold secondary */
-  .theme-thai { --cuisine-accent: #4b0082; --cuisine-secondary: #f4b942; }
-
-  /* Swap left border for a top border — more prominent on vertical cards */
-  .recipe-card[class*="theme-"] {
-    border-top: 5px solid var(--cuisine-accent);
-  }
-
-  /* Tag pills inside recipe cards */
-  .card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem;
-    margin-top: 0.6rem;
-  }
-
-  .card-tag {
-    display: inline-block;
-    padding: 0.15rem 0.55rem;
-    border-radius: 999px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    background: #f3f4f6;
-    color: #374151;
-  }
-
-  /* On cuisine-themed cards, use the accent color for the tag pills */
-  .recipe-card[class*="theme-"] .card-tag {
-    background: var(--cuisine-accent);
-    color: #fff;
-  }
-
-  /* Colored top accent bar on the recipe detail section */
-  .section.details[class*="theme-"] {
-    border-top: 6px solid var(--cuisine-accent);
-    padding-top: 1.5rem;
-  }
-
-  /* Style cuisine tags on the detail page using the accent color */
-  .cuisine-tag {
-    display: inline-block;
-    padding: 0.2rem 0.6rem;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    background: var(--cuisine-accent, #f97316);
-    color: #fff;
-    margin-right: 0.25rem;
-  }
+.cuisine-tag {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--cuisine-accent, #f97316);
+  color: #fff;
+  margin-right: 0.25rem;
+}
 
 /* Confirm modal */
 
