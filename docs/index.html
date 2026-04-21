@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GarnetSky — Recipe Sharing Made Simple</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .lightbox { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:999; align-items:center; justify-content:center; cursor:zoom-out; }
+    .lightbox.open { display:flex; }
+    .lightbox img { max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+    .screenshots figure img, .hero-img img { cursor:zoom-in; }
+  </style>
 </head>
 <body>
 
@@ -26,8 +32,7 @@
       <a href="https://garnet-sky-deploy.vercel.app" target="_blank" class="btn-primary">Get Started Free</a>
     </div>
     <div class="hero-img">
-      <!-- TODO: replace with a real screenshot -->
-      <img src="screenshots/home.png" alt="GarnetSky app screenshot" />
+      <img src="screenshots/home.png" alt="GarnetSky app screenshot" onclick="openLightbox(this.src)" />
     </div>
   </section>
 
@@ -36,7 +41,6 @@
     <h2>See It in Action</h2>
     <p class="sub">Watch a quick walkthrough of GarnetSky.</p>
     <div class="video-wrapper">
-      <!-- TODO: replace VIDEO_ID_HERE with the actual YouTube video ID from the final demo -->
       <iframe
         src="https://www.youtube.com/embed/VIDEO_ID_HERE"
         title="GarnetSky Demo"
@@ -76,19 +80,18 @@
   <!-- Screenshots -->
   <section class="section center">
     <h2>Screenshots</h2>
-    <p class="sub">A look inside the app.</p>
+    <p class="sub">A look inside the app. Click any image to enlarge.</p>
     <div class="screenshots">
-      <!-- TODO: add real screenshots to docs/screenshots/ and update filenames below -->
       <figure>
-        <img src="screenshots/all-recipes.png" alt="All Recipes page" />
+        <img src="screenshots/all-recipes.png" alt="All Recipes page" onclick="openLightbox(this.src)" />
         <figcaption>Browse all recipes with instant search and tag filters</figcaption>
       </figure>
       <figure>
-        <img src="screenshots/recipe-detail.png" alt="Recipe detail page" />
+        <img src="screenshots/recipe-detail.png" alt="Recipe detail page" onclick="openLightbox(this.src)" />
         <figcaption>Full recipe view with ingredients, instructions, and cuisine theming</figcaption>
       </figure>
       <figure>
-        <img src="screenshots/submit.png" alt="Submit a recipe" />
+        <img src="screenshots/submit.png" alt="Submit a recipe" onclick="openLightbox(this.src)" />
         <figcaption>Submit your own recipes with a rich text editor and photo upload</figcaption>
       </figure>
     </div>
@@ -107,6 +110,17 @@
       <a href="about.html">About the Team</a>
     </p>
   </footer>
+
+  <!-- Lightbox overlay -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" alt="Enlarged screenshot" />
+  </div>
+
+  <script>
+    function openLightbox(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').classList.add('open'); }
+    function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeLightbox(); });
+  </script>
 
 </body>
 </html>
