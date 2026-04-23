@@ -5,7 +5,7 @@ import { FavoritesProvider } from "./context/FavoritesContext";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 
-// Pages
+// Pages to allow for movement.
 import Home from "./pages/Home";
 import Search from "./pages/Search";
 import Submit from "./pages/Submit";
